@@ -15,4 +15,19 @@ locals {
     #   }
     # }
   }
+
+  # services which GitHub Actions can use.
+  services = [
+    "cloudbilling.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+  ]
+}
+
+resource "google_project_service" "github_actions" {
+  for_each = toset(local.services)
+
+  project = google_project.github_actions.project_id
+  service = each.key
+
+  disable_dependent_services = true
 }

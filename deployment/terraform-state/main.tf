@@ -16,13 +16,6 @@ data "google_billing_account" "billing" {
   open         = true
 }
 
-resource "google_project_service" "cloudresourcemanager" {
-  project = google_project.terraform_state.project_id
-  service = "cloudresourcemanager.googleapis.com"
-
-  disable_dependent_services = true
-}
-
 resource "google_project" "terraform_state" {
   name                = "Terraform Remote State"
   project_id          = "vjp-terraform-state"
