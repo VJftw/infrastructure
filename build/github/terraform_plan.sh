@@ -12,6 +12,6 @@ export TF_IN_AUTOMATION=true
 export TF_INPUT=0
 
 ./pleasew run -p "$please_target" -- "
-terraform init -lock=true -lock-timeout=30s && \
-terraform plan -refresh=true -compact-warnings -lock=true -lock-timeout=30s
+terraform init -lock=false && \
+terraform plan -refresh=true -compact-warnings -lock=false
 "
