@@ -10,6 +10,15 @@ resource "google_service_account" "github_repository_pr" {
   description  = "GitHub Actions service account for Pull Requests on ${each.key}"
 }
 
+resource "google_storage_bucket_iam_member" "github_repository_pr" {
+  for_each = local.github_repository_roles
+
+  bucket = "vjp-terraform-state"
+  role   = "roles/storage.objectViewer"
+
+  member = "serviceAccount:${google_service_account.github_repository[each.key].email}"
+}
+
 resource "google_organization_iam_member" "github_repository_pr" {
   provider = google-beta
 
