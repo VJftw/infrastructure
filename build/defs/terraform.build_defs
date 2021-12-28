@@ -15,14 +15,14 @@ def terraform_root(
 ):
     if use_remote_state:
         # git@github.com:VJftw/org-infra.git
-        # https://github.com/VJftw/org-infra.git
+        # https://github.com/VJftw/org-infra
         remote_state = genrule(
             name = f"_{name}_state_config",
             outs = [f"{name}_state.tf"],
             cmd = f"""
 set -euo pipefail
 
-repo_address="$(git config --get remote.origin.url | sed 's#:#/#' | sed 's#git@##' | sed 's#.git##' | rev | cut -f-3 -d/ | rev)"
+repo_address="$(git config --get remote.origin.url | sed 's#:#/#' | sed 's#git@##' | sed 's#\.git##' | rev | cut -f-3 -d/ | rev)"
 cat <<EOF > $OUTS
 terraform {{
     backend "gcs" {{
