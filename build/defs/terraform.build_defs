@@ -12,6 +12,7 @@ def terraform_root(
     visibility: list = [],
     add_default_workflows: bool = True,
     use_remote_state: bool = True,
+    remote_state_bucket: str = "vjp-terraform-state",
 ):
     if use_remote_state:
         # git@github.com:VJftw/org-infra.git
@@ -26,7 +27,7 @@ repo_address="$(git config --get remote.origin.url | sed 's#:#/#' | sed 's#git@#
 cat <<EOF > $OUTS
 terraform {{
     backend "gcs" {{
-        bucket  = "vjp-terraform-state"
+        bucket  = "{remote_state_bucket}"
         prefix  = "$repo_address/$PKG/{name}"
     }}
 }}
