@@ -1,5 +1,5 @@
 ---
-name: "Terraform: Plan"
+name: "Terraform"
 on:
   pull_request:
     branches:
@@ -19,7 +19,7 @@ jobs:
       terraform-workspaces: ${{ steps.set-terraform-workspaces.outputs.terraform-workspaces }}
     
   terraform_plan:
-    name: "Terraform: Plan"
+    name: "Plan"
     needs: generate_jobs
     runs-on: ubuntu-latest
     permissions:
@@ -41,34 +41,6 @@ jobs:
           service_account: 'gha-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
 
       - name: "Terraform: Plan"
-        id: plan
         env:
           TF_IN_AUTOMATION : "true"
         run: ./pleasew run -v=2 -p //build/github:terraform_plan -- "${{ matrix.terraform-workspace }}"
-
-      - name: Update Pull Request
-        uses: actions/github-script@v5
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
-            <details><summary>Show Plan</summary>
-
-            \`\`\`\n
-            ${process.env.PLAN}
-            \`\`\`
-
-            </details>
-
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
