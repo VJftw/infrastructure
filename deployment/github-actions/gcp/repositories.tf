@@ -1,7 +1,7 @@
 locals {
   github_repository_roles = {
     "VJftw/org-infra" = {
-      "organization" = ["roles/owner", "roles/resourcemanager.organizationAdmin"]
+      "organization" = ["roles/owner", "roles/resourcemanager.organizationAdmin", "roles/billing.admin"]
     }
     # "VJftw/vjpatel.me" = {
     #   # "organization" = ["roles/owner"]

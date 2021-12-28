@@ -76,7 +76,7 @@ resource "google_project_iam_member" "github_repository" {
   member = "serviceAccount:${google_service_account.github_repository[split(":", each.key)[0]].email}"
 }
 
-resource "google_service_account_iam_binding" "github_repository" {
+resource "google_service_account_iam_member" "github_repository" {
   provider                           = google-beta
 
   for_each = local.github_repository_roles
@@ -84,7 +84,17 @@ resource "google_service_account_iam_binding" "github_repository" {
   service_account_id = google_service_account.github_repository[each.key].name
   role               = "roles/iam.workloadIdentityUser"
 
-  members = [
-    "principalSet://iam.googleapis.com/projects/${google_project.github_actions.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}/attribute.repository/${each.key}",
-  ]
+  member = "principalSet://iam.googleapis.com/projects/${google_project.github_actions.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}/attribute.repository/${each.key}"
+  
+}
+
+resource "google_billing_account_iam_member" "github_actions" {
+  provider                           = google-beta
+
+  for_each = local.github_repository_roles
+
+  billing_account_id = data.google_billing_account.billing.id
+  role               = "roles/billing.user"
+
+  member = "principalSet://iam.googleapis.com/projects/${google_project.github_actions.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}/attribute.repository/${each.key}"
 }
