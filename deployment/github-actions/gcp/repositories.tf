@@ -18,6 +18,7 @@ locals {
 
   # services which GitHub Actions can use.
   services = [
+    "billingbudgets.googleapis.com",
     "cloudbilling.googleapis.com",
     "cloudresourcemanager.googleapis.com",
   ]

@@ -51,7 +51,7 @@ resource "google_organization_iam_member" "github_repository" {
     ] 
   ]))
 
-  org_id  = data.google_organization.org.id
+  org_id  = trimprefix(data.google_organization.org.id, "organizations/")
 
   role    = split(":", each.key)[1]
   member = "serviceAccount:${google_service_account.github_repository[split(":", each.key)[0]].email}"

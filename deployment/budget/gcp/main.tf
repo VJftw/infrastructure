@@ -16,13 +16,6 @@ data "google_billing_account" "billing" {
   open         = true
 }
 
-resource "google_project_service" "billingbudgets" {
-  project = google_project.terraform_state.project_id
-  service = "billingbudgets.googleapis.com"
-
-  disable_dependent_services = true
-}
-
 resource "google_billing_budget" "budget" {
   billing_account = data.google_billing_account.billing.id
   
