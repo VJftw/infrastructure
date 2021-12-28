@@ -6,4 +6,7 @@ terraform_root(
         "bucket.tf",
         "main.tf",
     ],
+    modules = [
+        "//modules/account/gcp:gcp",
+    ],
 )
