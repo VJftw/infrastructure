@@ -6,5 +6,6 @@ terraform_root(
         "main.tf",
         "oidc.tf",
         "repositories.tf",
+        "services.tf",
     ],
 )
