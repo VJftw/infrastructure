@@ -8,3 +8,8 @@ sh_binary(
     name = "terraform_plan",
     main = "terraform_plan.sh",
 )
+
+sh_binary(
+    name = "terraform_apply",
+    main = "terraform_apply.sh",
+)
