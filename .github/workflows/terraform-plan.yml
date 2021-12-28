@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Generate list of Terraform configuration as JSON
+    - run: git config --get remote.origin.url
+    - name: Generate list of Terraform workspaces as JSON
       run: "./pleasew -p -v2 run //build/github:terraform_workspaces -- plz-out/github/terraform_workspaces.json"
     - id: set-terraform-workspaces
+      name: Set Terraform workspaces output
       run: echo "::set-output name=terraform-workspaces::$(<plz-out/github/terraform_workspaces.json)"
     outputs:
       terraform-workspaces: ${{ steps.set-terraform-workspaces.outputs.terraform-workspaces }}
