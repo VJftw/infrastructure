@@ -1,12 +1,12 @@
 resource "google_storage_bucket" "terraform_state" {
-  project       = google_project.terraform_state.project_id
+  project = google_project.terraform_state.project_id
 
   name          = google_project.terraform_state.project_id
   location      = "EUROPE-WEST2"
   force_destroy = true
 
   uniform_bucket_level_access = true
-  
+
   versioning {
     enabled = true
   }
@@ -14,7 +14,7 @@ resource "google_storage_bucket" "terraform_state" {
   lifecycle_rule {
     condition {
       num_newer_versions = 5
-      age = 30
+      age                = 30
     }
 
     action {
@@ -37,7 +37,7 @@ resource "google_project_service" "cloudkms" {
 
 
 resource "google_kms_key_ring" "terraform_state" {
-  project       = google_project.terraform_state.project_id
+  project = google_project.terraform_state.project_id
 
   name     = "terraform-state"
   location = "europe-west2"

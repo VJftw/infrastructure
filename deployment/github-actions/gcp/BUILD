@@ -4,10 +4,10 @@ terraform_root(
     name = "gcp",
     srcs = [
         "main.tf",
-        "oidc.tf",
-        "repositories.tf",
-        "pull_requests.tf",
         "main_branch.tf",
+        "oidc.tf",
+        "pull_requests.tf",
+        "repositories.tf",
         "services.tf",
     ],
 )

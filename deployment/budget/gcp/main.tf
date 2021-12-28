@@ -18,17 +18,17 @@ data "google_billing_account" "billing" {
 
 resource "google_billing_budget" "budget" {
   billing_account = data.google_billing_account.billing.id
-  
+
   display_name = "Default"
-  
+
   amount {
     specified_amount {
       currency_code = "GBP"
-      units = "50"
+      units         = "50"
     }
   }
 
   threshold_rules {
-      threshold_percent =  0.75
+    threshold_percent = 0.75
   }
 }

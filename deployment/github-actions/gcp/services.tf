@@ -13,7 +13,7 @@ locals {
 }
 
 resource "google_project_service" "github_actions" {
-  provider                           = google-beta
+  provider = google-beta
 
   for_each = toset(local.services)
 

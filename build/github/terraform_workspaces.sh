@@ -2,13 +2,15 @@
 
 set -Eeuo pipefail
 
-JQ="$(dirname $0)/third_party/binary/jq-linux64"
+JQ="//third_party/binary:jq"
 
 ./pleasew query alltargets --include terraform_workspace --plain_output \
     | "$JQ" -R . \
     | "$JQ" -s .
 
-if [ ! -z "$1" ]; then
+outfile="${1:-}"
+
+if [ ! -z "${outfile}" ]; then
     mkdir -p "$(dirname "$1")"
     ./pleasew query alltargets --include terraform_workspace --plain_output \
     | "$JQ" -R . \
