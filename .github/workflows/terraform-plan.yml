@@ -19,6 +19,7 @@ jobs:
     
   terraform_plan:
     name: "Terraform: Plan"
+    needs: generate_jobs
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
