@@ -1,4 +1,4 @@
-TERRAFORM_DEF_VERSION = "a58805ca02582a6b68dd97b9a7f6f3949a56f151"
+TERRAFORM_DEF_VERSION = "f30c9a14b68eb639f400dde162b68dd35441051d"
 
 remote_file(
     name = "terraform",
@@ -10,7 +10,7 @@ remote_file(
 remote_file(
     name = "terraform_tool",
     binary = True,
-    hashes = ["d60437fcd2dd6d1e3bd313f5251317d39995c622e03953b9e5827442114be8cc"],
+    hashes = ["5656d9cdd8211fa558e725b17fcca1fe4e0546eddba5b9b6dff98982303288b1"],
     url = f"https://raw.githubusercontent.com/thought-machine/pleasings/{TERRAFORM_DEF_VERSION}/terraform/scripts/terraform.sh",
     visibility = ["PUBLIC"],
 )

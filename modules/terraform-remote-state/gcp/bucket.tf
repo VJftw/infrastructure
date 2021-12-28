@@ -1,7 +1,7 @@
 resource "google_storage_bucket" "terraform_state" {
-  project = module.project.project_id
+  project = var.project_id
 
-  name          = module.project.project_id
+  name          = var.project_id # we use Projects as security boundaries
   location      = "EUROPE-WEST2"
   force_destroy = true
 
@@ -29,7 +29,7 @@ resource "google_storage_bucket" "terraform_state" {
 }
 
 resource "google_project_service" "cloudkms" {
-  project = module.project.project_id
+  project = var.project_id
   service = "cloudkms.googleapis.com"
 
   disable_dependent_services = true
@@ -37,7 +37,7 @@ resource "google_project_service" "cloudkms" {
 
 
 resource "google_kms_key_ring" "terraform_state" {
-  project = module.project.project_id
+  project = var.project_id
 
   name     = "terraform-state"
   location = "europe-west2"
@@ -58,7 +58,7 @@ resource "google_kms_crypto_key" "terraform_state" {
 }
 
 data "google_storage_project_service_account" "gcs_account" {
-  project = module.project.project_id
+  project = var.project_id
 }
 
 resource "google_kms_crypto_key_iam_binding" "binding" {

@@ -21,11 +21,23 @@ locals {
       }
     }
     "VJftw/bastion" = {
+      "organization" = ["roles/billing.viewer"]
       "folders" = {
         "sandbox" = [
           "roles/resourcemanager.projectCreator",
           "roles/resourcemanager.projectDeleter",
+          "roles/owner",
         ]
+      }
+      "pull_request" = {
+        "organization" = ["roles/billing.viewer"]
+        "folders" = {
+          "sandbox" = [
+            "roles/owner", // Terratest in PRs in Sandbox projects
+            "roles/resourcemanager.folderViewer",
+            "roles/iam.securityReviewer",
+          ]
+        }
       }
     }
     # "VJftw/vjpatel.me" = {
