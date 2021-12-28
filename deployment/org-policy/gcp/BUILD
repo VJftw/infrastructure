@@ -5,5 +5,6 @@ terraform_root(
     srcs = [
         "environments.tf",
         "main.tf",
+        "organization.tf",
     ],
 )
