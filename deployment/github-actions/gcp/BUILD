@@ -10,4 +10,7 @@ terraform_root(
         "repositories.tf",
         "services.tf",
     ],
+    modules = [
+        "//modules/account/gcp:gcp",
+    ],
 )

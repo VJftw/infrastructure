@@ -20,23 +20,30 @@ data "google_billing_account" "billing" {
   open         = true
 }
 
-resource "google_project" "github_actions" {
-  provider = google-beta
+data "google_folders" "folders" {
+  parent_id = data.google_organization.org.name
+}
 
-  name                = "Github Actions"
-  project_id          = "vjp-github-actions"
-  org_id              = data.google_organization.org.org_id
-  folder_id           = null
-  billing_account     = data.google_billing_account.billing.id
-  skip_delete         = false # Everything is generateable from code, so we can start from fresh for Disaster Recovery.
-  auto_create_network = false
+
+locals {
+  folder_names = { for folder in data.google_folders.folders.folders : folder.display_name => folder.name }
+}
+
+module "project" {
+  source = "//modules/account/gcp:gcp"
+
+  domain       = "vjpatel.me"
+  project_id   = "vjp-github-actions"
+  project_name = "Github Actions"
+
+  folder_display_name = "management"
 }
 
 
 resource "google_project_service" "iam" {
   provider = google-beta
 
-  project = google_project.github_actions.project_id
+  project = module.project.project_id
 
   service = "iam.googleapis.com"
 
@@ -46,7 +53,7 @@ resource "google_project_service" "iam" {
 resource "google_project_service" "iamcredentials" {
   provider = google-beta
 
-  project = google_project.github_actions.project_id
+  project = module.project.project_id
 
   service = "iamcredentials.googleapis.com"
 
