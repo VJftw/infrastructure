@@ -11,8 +11,6 @@ resource "google_service_account" "github_repository_pr" {
 }
 
 resource "google_storage_bucket_iam_member" "github_repository_pr" {
-  project = "vjp-terraform-state"
-
   for_each = local.github_repository_roles
 
   bucket = "vjp-terraform-state"
