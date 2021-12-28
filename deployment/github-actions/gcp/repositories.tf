@@ -7,6 +7,7 @@ locals {
         "roles/resourcemanager.folderAdmin",
         "roles/resourcemanager.folderIamAdmin",
         "roles/billing.admin",
+        "roles/orgpolicy.policyAdmin",
       ]
       "pull_request" = {
         "organization" = [
@@ -15,6 +16,7 @@ locals {
           "roles/resourcemanager.folderViewer",
           "roles/billing.viewer",
           "roles/iam.securityReviewer",
+          "roles/orgpolicy.policyViewer",
         ]
       }
     }
