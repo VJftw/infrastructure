@@ -1,0 +1,41 @@
+terraform {
+  required_providers {
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = "4.5.0"
+    }
+  }
+}
+
+data "google_organization" "org" {
+  domain = "vjpatel.me"
+}
+
+data "google_billing_account" "billing" {
+  display_name = "My Billing Account"
+  open         = true
+}
+
+resource "google_project_service" "billingbudgets" {
+  project = google_project.terraform_state.project_id
+  service = "billingbudgets.googleapis.com"
+
+  disable_dependent_services = true
+}
+
+resource "google_billing_budget" "budget" {
+  billing_account = data.google_billing_account.billing.id
+  
+  display_name = "Default"
+  
+  amount {
+    specified_amount {
+      currency_code = "GBP"
+      units = "50"
+    }
+  }
+
+  threshold_rules {
+      threshold_percent =  0.75
+  }
+}

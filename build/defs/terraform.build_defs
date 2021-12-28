@@ -1,0 +1,46 @@
+subinclude("//third_party/defs:terraform")
+_upstream_terraform_root = terraform_root
+
+def terraform_root(
+    name: str,
+    srcs: list,
+    var_files: list = [],
+    modules: list = [],
+    providers: list = [],
+    toolchain: str = None,
+    labels: list = [],
+    visibility: list = [],
+    add_default_workflows: bool = True,
+    use_remote_state: bool = True,
+):
+    if use_remote_state:
+        remote_state = genrule(
+            name = f"_{name}_state_config",
+            outs = [f"{name}_state.tf"],
+            cmd = f"""
+    set -euo pipefail
+
+    cat <<EOF > $OUTS
+terraform {{
+    backend "gcs" {{
+        bucket  = "vjp-terraform-state"
+        prefix  = "$(git config --get remote.origin.url)/$PKG/{name}"
+    }}
+}}
+EOF
+            """,
+        )
+
+        srcs = srcs + [remote_state]
+
+    return _upstream_terraform_root(
+      name=name, 
+      srcs=srcs, 
+      var_files=var_files, 
+      modules=modules, 
+      providers=providers, 
+      toolchain=toolchain, 
+      labels=labels, 
+      visibility=visibility,
+      add_default_workflows=add_default_workflows,
+    )

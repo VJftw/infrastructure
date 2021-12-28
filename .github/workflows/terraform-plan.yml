@@ -1,0 +1,43 @@
+---
+name: "Terraform: Plan"
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  generate_jobs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate list of Terraform configuration as JSON
+      run: "./pleasew -p -v2 run //build/github:terraform_workspaces -- plz-out/github/terraform_workspaces.json"
+    - id: set-terraform-workspaces
+      run: echo "::set-output name=terraform-workspaces::$(<plz-out/github/terraform_workspaces.json)"
+    outputs:
+      terraform-workspaces: ${{ steps.set-terraform-workspaces.outputs.terraform-workspaces }}
+    
+  terraform_plan:
+    name: "Terraform: Plan"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    strategy:
+      matrix:
+        terraform-workspace: ${{ fromJson(needs.generate_jobs.outputs.terraform-workspaces) }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      
+      - id: 'gcp-auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
+          service_account: 'gha-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
+
+      - name: "Terraform: Plan"
+        env:
+          TF_IN_AUTOMATION : "true"
+        run: ./pleasew run -v=2 -p //build/github:terraform_plan -- "${{ matrix.terraform-workspace }}"
