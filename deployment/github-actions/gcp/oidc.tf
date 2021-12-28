@@ -43,6 +43,8 @@ resource "google_service_account" "github_repository" {
 }
 
 resource "google_organization_iam_member" "github_repository" {
+  provider                           = google-beta
+
   for_each = toset(flatten([
     for gh_repo, config in local.github_repository_roles: [
       for role in lookup(config, "organization", []): [

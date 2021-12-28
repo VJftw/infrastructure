@@ -7,6 +7,27 @@ terraform {
   }
 }
 
+# provider "google" {
+#  alias = "impersonation"
+#  scopes = [
+#    "https://www.googleapis.com/auth/cloud-platform",
+#    "https://www.googleapis.com/auth/userinfo.email",
+#  ]
+# }
+
+# data "google_service_account_access_token" "default" {
+#  provider               	= google.impersonation
+#  target_service_account 	= "gha-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com"
+#  scopes                 	= ["userinfo-email", "cloud-platform"]
+#  lifetime               	= "1200s"
+# }
+
+# provider "google-beta" {
+#  access_token	= data.google_service_account_access_token.default.access_token
+#  request_timeout 	= "60s"
+# }
+
+
 data "google_organization" "org" {
   domain = "vjpatel.me"
 }
