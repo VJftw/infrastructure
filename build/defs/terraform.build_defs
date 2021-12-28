@@ -1,0 +1,49 @@
+subinclude("//third_party/defs:terraform")
+_upstream_terraform_root = terraform_root
+
+def terraform_root(
+    name: str,
+    srcs: list,
+    var_files: list = [],
+    modules: list = [],
+    providers: list = [],
+    toolchain: str = None,
+    labels: list = [],
+    visibility: list = [],
+    add_default_workflows: bool = True,
+    use_remote_state: bool = True,
+):
+    if use_remote_state:
+        # git@github.com:VJftw/org-infra.git
+        # https://github.com/VJftw/org-infra
+        remote_state = genrule(
+            name = f"_{name}_state_config",
+            outs = [f"{name}_state.tf"],
+            cmd = f"""
+set -euo pipefail
+
+repo_address="$(git config --get remote.origin.url | sed 's#:#/#' | sed 's#git@##' | sed 's#\.git##' | rev | cut -f-3 -d/ | rev)"
+cat <<EOF > $OUTS
+terraform {{
+    backend "gcs" {{
+        bucket  = "vjp-terraform-state"
+        prefix  = "$repo_address/$PKG/{name}"
+    }}
+}}
+EOF
+            """,
+        )
+
+        srcs = srcs + [remote_state]
+
+    return _upstream_terraform_root(
+      name=name, 
+      srcs=srcs, 
+      var_files=var_files, 
+      modules=modules, 
+      providers=providers, 
+      toolchain=toolchain, 
+      labels=labels, 
+      visibility=visibility,
+      add_default_workflows=add_default_workflows,
+    )
