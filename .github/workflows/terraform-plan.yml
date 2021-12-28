@@ -25,6 +25,7 @@ jobs:
       contents: 'read'
       id-token: 'write'
     strategy:
+      fail-fast: false
       matrix:
         terraform-workspace: ${{ fromJson(needs.generate_jobs.outputs.terraform-workspaces) }}
     steps:
