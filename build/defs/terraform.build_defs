@@ -22,7 +22,7 @@ def terraform_root(
             cmd = f"""
 set -euo pipefail
 
-repo_address="$(git config --get remote.origin.url | sed -r 's/.*(\@|\/\/)(.*)(\:|\/)([^:\/]*)\/([^\/\.]*)\.git/\\2\/\\4\/\\5/')"
+repo_address="$(git config --get remote.origin.url | sed 's#:#/#' | sed 's#git@##' | sed 's#.git##' | rev | cut -f-3 -d/ | rev)"
 cat <<EOF > $OUTS
 terraform {{
     backend "gcs" {{
