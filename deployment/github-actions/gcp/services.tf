@@ -8,6 +8,8 @@ locals {
     "cloudbilling.googleapis.com",
     "cloudkms.googleapis.com",
     "cloudresourcemanager.googleapis.com",
+    "compute.googleapis.com",
+    "container.googleapis.com",
     "serviceusage.googleapis.com",
   ]
 }

@@ -21,7 +21,13 @@ locals {
       }
     }
     "VJftw/bastion" = {
-      "organization" = ["roles/billing.viewer"]
+      "organization" = [
+        "roles/viewer",
+        "roles/resourcemanager.organizationViewer",
+        "roles/resourcemanager.folderViewer",
+        "roles/billing.viewer",
+        "roles/iam.securityReviewer",
+      ]
       "folders" = {
         "sandbox" = [
           "roles/resourcemanager.projectCreator",
@@ -30,9 +36,17 @@ locals {
         ]
       }
       "pull_request" = {
-        "organization" = ["roles/billing.viewer"]
+        "organization" = [
+          "roles/viewer",
+          "roles/resourcemanager.organizationViewer",
+          "roles/resourcemanager.folderViewer",
+          "roles/billing.viewer",
+          "roles/iam.securityReviewer",
+        ]
         "folders" = {
           "sandbox" = [
+            "roles/resourcemanager.projectCreator",
+            "roles/resourcemanager.projectDeleter",
             "roles/owner", // allow Terratest in Sandbox only during PRs
             "roles/resourcemanager.folderViewer",
             "roles/iam.securityReviewer",
