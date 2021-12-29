@@ -74,6 +74,17 @@ resource "google_project_iam_member" "github_repository" {
   member = "serviceAccount:${google_service_account.github_repository[split(":", each.key)[0]].email}"
 }
 
+resource "google_billing_account_iam_member" "github_actions" {
+  provider = google-beta
+
+  for_each = local.github_repository_roles
+
+
+  billing_account_id = data.google_billing_account.billing.id
+  role               = "roles/billing.user"
+  member = "serviceAccount:${google_service_account.github_repository[each.key].email}"
+}
+
 resource "google_service_account_iam_member" "github_repository" {
   provider = google-beta
 
@@ -81,25 +92,6 @@ resource "google_service_account_iam_member" "github_repository" {
 
   service_account_id = google_service_account.github_repository[each.key].name
   role               = "roles/iam.workloadIdentityUser"
-
-  # member = "principalSet://iam.googleapis.com/projects/${module.project.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}/attribute.repository/${each.key}"
-
-  member = join("/", [
-    "principal://iam.googleapis.com/projects/${module.project.number}",
-    "locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}",
-    # repo:octo-org/octo-repo:ref:refs/heads/demo-branch
-    # limit to just the main branch of repositories
-    "subject/repo:${each.key}:ref:refs/heads/main",
-  ])
-}
-
-resource "google_billing_account_iam_member" "github_actions" {
-  provider = google-beta
-
-  for_each = local.github_repository_roles
-
-  billing_account_id = data.google_billing_account.billing.id
-  role               = "roles/billing.user"
 
   # member = "principalSet://iam.googleapis.com/projects/${module.project.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}/attribute.repository/${each.key}"
 

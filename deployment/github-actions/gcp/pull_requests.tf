@@ -76,6 +76,16 @@ resource "google_project_iam_member" "github_repository_pr" {
   member = "serviceAccount:${google_service_account.github_repository_pr[split(":", each.key)[0]].email}"
 }
 
+resource "google_billing_account_iam_member" "github_actions_pr" {
+  provider = google-beta
+
+  for_each = local.github_repository_roles
+
+
+  billing_account_id = data.google_billing_account.billing.id
+  role               = "roles/billing.user"
+  member = "serviceAccount:${google_service_account.github_repository_pr[each.key].email}"
+}
 
 resource "google_service_account_iam_member" "github_repository_pr" {
   provider = google-beta
@@ -95,23 +105,4 @@ resource "google_service_account_iam_member" "github_repository_pr" {
     "subject/repo:${each.key}:pull_request",
   ])
 
-}
-
-resource "google_billing_account_iam_member" "github_actions_pr" {
-  provider = google-beta
-
-  for_each = local.github_repository_roles
-
-  billing_account_id = data.google_billing_account.billing.id
-  role               = "roles/billing.viewer"
-
-  # member = "principal://iam.googleapis.com/projects/${module.project.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}/subject/${each.key}"
-
-  member = join("/", [
-    "principal://iam.googleapis.com/projects/${module.project.number}",
-    "locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}",
-    # repo:octo-org/octo-repo:pull_request
-    # limit to only PRs
-    "subject/repo:${each.key}:pull_request",
-  ])
 }
