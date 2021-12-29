@@ -35,7 +35,7 @@ locals {
         ]
       }
     }
-    "VJftw/cloud-bastion-tunnel" = {
+    "VJftw/cloud-bastion" = {
       "organization" = [
         "roles/viewer",
         "roles/resourcemanager.organizationViewer",
