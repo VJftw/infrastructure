@@ -16,7 +16,7 @@ resource "google_storage_bucket_iam_member" "github_repository_pr" {
   bucket = "vjp-terraform-state"
   role   = "roles/storage.objectViewer"
 
-  member = "serviceAccount:${google_service_account.github_repository[each.key].email}"
+  member = "serviceAccount:${google_service_account.github_repository_pr[each.key].email}"
 }
 
 resource "google_organization_iam_member" "github_repository_pr" {
@@ -53,7 +53,7 @@ resource "google_folder_iam_member" "github_repository_pr" {
 
   role = split(":", each.key)[2]
 
-  member = "serviceAccount:${google_service_account.github_repository[split(":", each.key)[0]].email}"
+  member = "serviceAccount:${google_service_account.github_repository_pr[split(":", each.key)[0]].email}"
 }
 
 
