@@ -33,6 +33,7 @@ locals {
         "organization" = ["roles/billing.viewer"]
         "folders" = {
           "sandbox" = [
+            "roles/owner", // allow Terratest in Sandbox only during PRs
             "roles/resourcemanager.folderViewer",
             "roles/iam.securityReviewer",
           ]
