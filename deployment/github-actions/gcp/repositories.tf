@@ -1,4 +1,19 @@
 locals {
+  /* github_repository_roles
+  This object defines the GCP role bindings to apply in the following structure:
+  <GitHub Repository>:
+    organization: list of roles to apply at the organization level for actions against the 'main' branch.
+    folders:
+      <folder_name>: list of roles to apply at the per-folder level for actions against the 'main' branch.
+    projects:
+      <project_name>: list of roles to apply at the per-project level for actions against the 'main' branch.
+    pull_request:
+      organization: list of roles to apply at the organization level for actions against Pull Requests.
+      folders:
+        <folder_name>: list of roles to apply at the per-folder level for actions against Pull Requests.
+      projects:
+        <project_name>: list of roles to apply at the per-project level for actions against Pull Requests.
+*/
   github_repository_roles = {
     "VJftw/org-infra" = {
       "organization" = [
@@ -20,7 +35,7 @@ locals {
         ]
       }
     }
-    "VJftw/bastion" = {
+    "VJftw/cloud-bastion-tunnel" = {
       "organization" = [
         "roles/viewer",
         "roles/resourcemanager.organizationViewer",
