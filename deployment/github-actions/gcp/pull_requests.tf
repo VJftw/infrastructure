@@ -84,7 +84,7 @@ resource "google_billing_account_iam_member" "github_actions_pr" {
 
   billing_account_id = data.google_billing_account.billing.id
   role               = "roles/billing.user"
-  member = "serviceAccount:${google_service_account.github_repository_pr[each.key].email}"
+  member             = "serviceAccount:${google_service_account.github_repository_pr[each.key].email}"
 }
 
 resource "google_service_account_iam_member" "github_repository_pr" {

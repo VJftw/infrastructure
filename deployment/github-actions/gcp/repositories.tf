@@ -23,10 +23,10 @@ locals {
     "VJftw/bastion" = {
       "organization" = [
         "roles/viewer",
-          "roles/resourcemanager.organizationViewer",
-          "roles/resourcemanager.folderViewer",
-          "roles/billing.viewer",
-          "roles/iam.securityReviewer",
+        "roles/resourcemanager.organizationViewer",
+        "roles/resourcemanager.folderViewer",
+        "roles/billing.viewer",
+        "roles/iam.securityReviewer",
       ]
       "folders" = {
         "sandbox" = [
