@@ -1,0 +1,68 @@
+VJftw/org-infra:
+  pull_requests:
+    organization:
+      - roles/billing.viewer
+      - roles/iam.securityReviewer
+      - roles/orgpolicy.policyViewer
+      - roles/resourcemanager.folderViewer
+      - roles/resourcemanager.organizationViewer
+      - roles/viewer
+    buckets:
+      vjp-terraform-state: 
+        - roles/storage.objectViewer
+    billing_accounts:
+      "My Billing Account":
+        - roles/billing.viewer
+
+  branches:
+    main:
+      organization:
+        - roles/billing.admin
+        - roles/orgpolicy.policyAdmin
+        - roles/owner
+        - roles/resourcemanager.folderAdmin
+        - roles/resourcemanager.folderIamAdmin
+        - roles/resourcemanager.organizationAdmin
+      buckets:
+        vjp-terraform-state: 
+          - roles/storage.objectAdmin
+      billing_accounts:
+        "My Billing Account":
+          - roles/billing.user
+
+VJftw/cloud-bastion:
+  pull_requests:
+    organization:
+      - roles/billing.viewer
+      - roles/iam.securityReviewer
+      - roles/resourcemanager.folderViewer
+      - roles/resourcemanager.organizationViewer
+      - roles/viewer
+    folders:
+      sandbox:
+        - roles/iam.securityReviewer
+        - roles/owner # // allow Terratest in Sandbox only during PR
+        - roles/resourcemanager.folderViewer
+        - roles/resourcemanager.projectCreator
+        - roles/resourcemanager.projectDeleter
+    billing_accounts:
+      "My Billing Account": # TODO: use a separate billing account for Sandbox?
+        - roles/billing.user
+    
+  branches:
+    main:
+      organization:
+        - roles/billing.viewer
+        - roles/iam.securityReviewer
+        - roles/resourcemanager.folderViewer
+        - roles/resourcemanager.organizationViewer
+        - roles/viewer
+      folders:
+        sandbox:
+          - roles/owner
+          - roles/resourcemanager.projectCreator
+          - roles/resourcemanager.projectDeleter
+      billing_accounts:
+        "My Billing Account": 
+          - roles/billing.user
+  

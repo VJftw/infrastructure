@@ -43,7 +43,7 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
-          service_account: 'gha-pr-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
+          service_account: 'ghapr-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
 
       - name: "Terraform: Plan"
         run: ./pleasew run -v=2 -p //build/github:terraform_plan -- "${{ matrix.terraform-workspace }}"
@@ -70,7 +70,7 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
-          service_account: 'gha-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
+          service_account: 'gha-vjftw-org-infra-main@vjp-github-actions.iam.gserviceaccount.com'
 
       - name: "Terraform: Apply"
         run: ./pleasew run -v=2 -p //build/github:terraform_apply -- "${{ matrix.terraform-workspace }}"

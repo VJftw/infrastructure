@@ -27,6 +27,8 @@ data "google_folders" "folders" {
 
 locals {
   folder_names = { for folder in data.google_folders.folders.folders : folder.display_name => folder.name }
+
+  repositories = yamldecode(file("repositories.yaml"))
 }
 
 module "project" {

@@ -3,11 +3,11 @@ subinclude("//build/defs:terraform")
 terraform_root(
     name = "gcp",
     srcs = [
+        "branches.tf",
         "main.tf",
-        "main_branch.tf",
         "oidc.tf",
-        "pull_requests.tf",
-        "repositories.tf",
+        "pull-requests.tf",
+        "repositories.yaml",
         "services.tf",
     ],
     modules = [
