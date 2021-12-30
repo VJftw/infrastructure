@@ -6,10 +6,25 @@ terraform {
     }
   }
 }
+provider "aws" {
+  region = "us-east-1"
+}
+data "aws_organizations_organization" "org" {
+  provider = aws
+}
+
+locals {
+  account_names_to_ids = {
+    for a in data.aws_organizations_organization.org.accounts : a.name => a.id
+  }
+}
 
 provider "aws" {
-  alias               = "management"
-  allowed_account_ids = ["400744676526"]
+  alias = "management"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account_names_to_ids["vjp-management"]}:role/administrator"
+  }
 
   region = "us-east-1"
 }

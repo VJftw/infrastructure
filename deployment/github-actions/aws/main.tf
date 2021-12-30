@@ -7,29 +7,34 @@ terraform {
   }
 }
 
-
 locals {
   repositories = yamldecode(file("repositories.yaml"))
 }
 
 provider "aws" {
-  alias               = "management"
-  allowed_account_ids = ["400744676526"]
-
   region = "us-east-1"
 }
 
 data "aws_organizations_organization" "org" {
-  provider = aws.management
+  provider = aws
 }
-
-data "aws_caller_identity" "current" {
-  provider = aws.management
-}
-
 
 locals {
   account_names_to_ids = {
     for a in data.aws_organizations_organization.org.accounts : a.name => a.id
   }
+}
+
+provider "aws" {
+  alias = "management"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account_names_to_ids["vjp-management"]}:role/administrator"
+  }
+
+  region = "us-east-1"
+}
+
+data "aws_caller_identity" "current" {
+  provider = aws.management
 }
