@@ -1,0 +1,25 @@
+VJftw/org-infra:
+  pull_requests:
+    accounts:
+      vjp-management:
+        - read-only
+  branches:
+    main:
+      accounts:
+        vjp-management:
+          - administrator
+
+"VJftw/vjpatel.me":
+  pull_requests:
+    accounts:
+      vjp-website:
+        - read-only
+      vjp-management:
+        - read-only
+  branches:
+    main:
+      accounts:
+        vjp-website:
+          - administrator
+        vjp-management:
+          - account-creator
