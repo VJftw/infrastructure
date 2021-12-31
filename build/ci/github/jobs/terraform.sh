@@ -32,11 +32,16 @@ if [ -f "${FLAGS_changes_file}" ]; then
     fi
 fi
 
-jsonified_terraform_roots=$(printf "%s\n" "${terraform_roots[@]}" \
-    | "$JQ" -R . \
-    | "$JQ" -s .
-)
-
 mkdir -p "$(dirname "${FLAGS_out_file}")"
-printf "%s" "${jsonified_terraform_roots}" | "$JQ" -c . > "${FLAGS_out_file}"
+
+if [ ${#terraform_roots[@]} -eq 0  ]; then
+    echo "[]" | jq -c . > "${FLAGS_out_file}"
+else
+    jsonified_terraform_roots=$(printf "%s\n" "${terraform_roots[@]}" \
+        | "$JQ" -R . \
+        | "$JQ" -s .
+    )
+    printf "%s" "${jsonified_terraform_roots}" | "$JQ" -c . > "${FLAGS_out_file}"
+fi
+
 util::success "Wrote ${#terraform_roots[@]} Terraform jobs to ${FLAGS_out_file}"
