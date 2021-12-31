@@ -13,14 +13,14 @@ DEFINE_string 'out_file' 'plz-out/github/terraform_jobs.json' 'path to file to w
 FLAGS "$@" || exit $?
 eval set -- "${FLAGS_ARGV}"
 
-terraform_roots=($(./pleasew query alltargets \
+mapfile -t terraform_roots < <(./pleasew query alltargets \
     --include terraform_workspace \
     --plain_output
-))
+)
 
 # Filter terraform_roots to just changed targets if changes_file is non-empty.
 if [ -f "${FLAGS_changes_file}" ]; then
-    changes=($(<${FLAGS_changes_file}))
+    mapfile -t changes < "${FLAGS_changes_file}"
     if [ ${#changes[@]} -ne 0 ]; then
         new_terraform_roots=()
         for terraform_root in "${terraform_roots[@]}"; do

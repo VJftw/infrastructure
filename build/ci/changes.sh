@@ -20,10 +20,10 @@ fi
 # ensure we have origin
 git fetch --all --depth=100
 
-changed_targets=($(./pleasew query changes \
+mapfile -t changed_targets < <(./pleasew query changes \
     --since "${FLAGS_since}" \
     --level=-1
-))
+)
 
 git checkout "${current_ref}" &> /dev/null
 
