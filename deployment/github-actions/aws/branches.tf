@@ -101,16 +101,3 @@ resource "aws_iam_policy" "branch" {
 
   policy = data.aws_iam_policy_document.branch_policy["${each.value.repo}:${each.value.branch}"].json
 }
-
-# resource "aws_iam_policy_attachment" "branch" {
-#   provider = aws.management
-
-#   for_each = {
-#     for rb in local.repository_branch_accounts_roles : "${rb.repo}:${rb.branch}" => rb
-#   }
-
-#   name = "gha-${lower(replace(each.value.repo, "/\\.|//", "-"))}-${each.value.branch}"
-
-#   roles      = [aws_iam_role.branch["${each.value.repo}:${each.value.branch}"].name]
-#   policy_arn = aws_iam_policy.branch["${each.value.repo}:${each.value.branch}"].arn
-# }

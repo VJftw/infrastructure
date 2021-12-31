@@ -9,5 +9,6 @@ terraform_root(
     ],
     modules = [
         "//modules/account/aws:aws",
+        "//modules/auth/aws:aws",
     ],
 )

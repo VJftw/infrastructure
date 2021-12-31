@@ -10,6 +10,7 @@ def terraform_root(
     toolchain: str = None,
     labels: list = [],
     visibility: list = [],
+    add_default_workflows: bool = True,
     use_remote_state: bool = True,
     remote_state_bucket: str = "vjp-terraform-state",
 ):
@@ -36,7 +37,7 @@ EOF
 
         srcs = srcs + [remote_state]
 
-    terraform_workspace = _upstream_terraform_root(
+    return _upstream_terraform_root(
       name=name, 
       srcs=srcs, 
       var_files=var_files, 
@@ -45,37 +46,5 @@ EOF
       toolchain=toolchain, 
       labels=labels, 
       visibility=visibility,
-      add_default_workflows=False,
+      add_default_workflows=add_default_workflows,
     )
-
-    terraform_workspace = sh_cmd(
-        name=f"{name}_extended",
-        shell = "/usr/bin/env bash",
-        data = [
-            terraform_workspace, 
-        ],
-        cmd = f"""
-$(out_exe {terraform_workspace}) \"\\\$@\"
-        """,
-    )
-
-    workflows = {
-        "plan": "terraform init && terraform plan",
-        "apply": "terraform init && terraform apply",
-        "destroy": "terraform init && terraform destroy",
-    }
-
-    for workflow in workflows.keys():
-        cmd = workflows[workflow]
-
-        sh_cmd(
-            name = f"{name}_{workflow}",
-            shell = "/usr/bin/env bash",
-            data = [
-                terraform_workspace, 
-            ],
-            cmd = f"""
-$(out_exe {terraform_workspace}) \"{cmd} \\\$@\"
-            """,
-            labels = [f"terraform_{workflow}"],
-        )

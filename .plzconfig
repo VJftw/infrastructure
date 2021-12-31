@@ -12,10 +12,6 @@ version = 16.17.1
 terraform-plz-tool = //third_party/defs:terraform_tool
 terraform-default-toolchain = //third_party/terraform:1_1
 
-[go]
-importpath = github.com/VJftw/org-infra
-gotool = //third_party/go:toolchain|go
-
 [alias "lint"]
 cmd = run //build/util:_lint_all
 
