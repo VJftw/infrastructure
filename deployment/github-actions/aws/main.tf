@@ -25,20 +25,29 @@ locals {
   }
 }
 
-data "external" "aws_auth" {
-  program = [
-    "aws-cross-account", 
-    "--account_name=vjp-management",
-    "--pull_request_role_name=read-only",
-    "--branch_role_name=main:administrator",
-    "--role_name=administrator",
-  ]
+module "aws_auth" {
+  source = "//modules/auth/aws:aws"
+
+  providers = {
+    aws.management = aws 
+   }
+
+  account_name = "vjp-management"
+  pull_request_role_name = "read-only"
+
+  branch_role_names = {
+    "main" = "administrator"
+  }
+
+  role_name = "administrator"
 }
 
 provider "aws" {
   alias = "management"
 
-  profile = data.external.aws_auth.result.profile
+  assume_role {
+    role_arn = module.aws_auth.role_arn
+  } 
 
   region = "us-east-1"
 }

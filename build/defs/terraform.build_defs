@@ -53,16 +53,8 @@ EOF
         shell = "/usr/bin/env bash",
         data = [
             terraform_workspace, 
-            "//tools/aws-cross-account:aws-cross-account",
         ],
         cmd = f"""
-# add aws-cross-account binary
-script_path="\\\$( cd -- "\\\$(dirname "\\\$0")" >/dev/null 2>&1 ; pwd -P )"
-# shellcheck disable=SC2001
-repo_path="\\\$( echo "\\\$script_path" | sed 's#/plz-out.*\\\$##' )"
-aws_cross_account="\\\$repo_path/$(out_exe //tools/aws-cross-account:aws-cross-account)"
-export PATH="\\\$(dirname "\\\$aws_cross_account"):\\\$PATH"
-
 $(out_exe {terraform_workspace}) \"\\\$@\"
         """,
     )
