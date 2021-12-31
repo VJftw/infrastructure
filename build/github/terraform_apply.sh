@@ -10,6 +10,7 @@ please_target="$1"
 
 export TF_IN_AUTOMATION=true
 export TF_INPUT=0
+export AWS_SHARED_CREDENTIALS_FILE="plz-out/aws/credentials"
 
 ./pleasew run -p "${please_target}_extended" -- "
 terraform init -lock=true -lock-timeout=30s && \

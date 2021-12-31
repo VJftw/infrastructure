@@ -18,7 +18,7 @@ import (
 )
 
 type opts struct {
-	CredentialsFile string `long:"credentials_file" default:"~/.aws/credentials"`
+	CredentialsFile string `long:"credentials_file" default:"~/.aws/credentials" env:"AWS_SHARED_CREDENTIALS_FILE"`
 	
 	AccountName string `long:"account_name" required:"yes"`
 	PullRequestRoleName string `long:"pull_request_role_name"`
