@@ -13,6 +13,8 @@ mapfile -t sh_dirs < <(./pleasew query alltargets \
     | sort -u
 )
 
+export SHELLCHECK_OPTS="-e SC1091" # (info): Not following: //third_party/sh:shflags: openBinaryFile: does not exist (No such file or directory)
+
 for dir in "${sh_dirs[@]}"; do
     mapfile -t files < <(find "${dir}/" -type f -name '*.sh')
     if ! "$SHELLCHECK" --external-sources "${files[@]}"; then
