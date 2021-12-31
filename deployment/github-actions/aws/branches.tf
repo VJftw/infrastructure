@@ -36,6 +36,11 @@ resource "aws_iam_role" "branch" {
   }
 
   assume_role_policy = data.aws_iam_policy_document.branch_assume_role_policy["${each.value.repo}:${each.value.branch}"].json
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AWSOrganizationsReadOnlyAccess", # Let's us obtain Account IDs by Account Names
+    aws_iam_policy.branch["${each.value.repo}:${each.value.branch}"].arn,
+  ]
 }
 
 data "aws_iam_policy_document" "branch_assume_role_policy" {
@@ -97,15 +102,15 @@ resource "aws_iam_policy" "branch" {
   policy = data.aws_iam_policy_document.branch_policy["${each.value.repo}:${each.value.branch}"].json
 }
 
-resource "aws_iam_policy_attachment" "branch" {
-  provider = aws.management
+# resource "aws_iam_policy_attachment" "branch" {
+#   provider = aws.management
 
-  for_each = {
-    for rb in local.repository_branch_accounts_roles : "${rb.repo}:${rb.branch}" => rb
-  }
+#   for_each = {
+#     for rb in local.repository_branch_accounts_roles : "${rb.repo}:${rb.branch}" => rb
+#   }
 
-  name = "gha-${lower(replace(each.value.repo, "/\\.|//", "-"))}-${each.value.branch}"
+#   name = "gha-${lower(replace(each.value.repo, "/\\.|//", "-"))}-${each.value.branch}"
 
-  roles      = [aws_iam_role.branch["${each.value.repo}:${each.value.branch}"].name]
-  policy_arn = aws_iam_policy.branch["${each.value.repo}:${each.value.branch}"].arn
-}
+#   roles      = [aws_iam_role.branch["${each.value.repo}:${each.value.branch}"].name]
+#   policy_arn = aws_iam_policy.branch["${each.value.repo}:${each.value.branch}"].arn
+# }

@@ -30,6 +30,11 @@ resource "aws_iam_role" "pr" {
   }
 
   assume_role_policy = data.aws_iam_policy_document.pr_assume_role_policy[each.value.repo].json
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AWSOrganizationsReadOnlyAccess", # Let's us obtain Account IDs by Account Names
+    aws_iam_policy.pr[each.value.repo].arn,
+  ]
 }
 
 data "aws_iam_policy_document" "pr_assume_role_policy" {
@@ -91,15 +96,15 @@ resource "aws_iam_policy" "pr" {
   policy = data.aws_iam_policy_document.pr_policy[each.value.repo].json
 }
 
-resource "aws_iam_policy_attachment" "pr" {
-  provider = aws.management
+# resource "aws_iam_policy_attachment" "pr" {
+#   provider = aws.management
 
-  for_each = {
-    for rb in local.repository_pr_accounts_roles : rb.repo => rb
-  }
+#   for_each = {
+#     for rb in local.repository_pr_accounts_roles : rb.repo => rb
+#   }
 
-  name = "ghapr-${lower(replace(each.value.repo, "/\\.|//", "-"))}"
+#   name = "ghapr-${lower(replace(each.value.repo, "/\\.|//", "-"))}"
 
-  roles      = [aws_iam_role.pr[each.value.repo].name]
-  policy_arn = aws_iam_policy.pr[each.value.repo].arn
-}
+#   roles      = [aws_iam_role.pr[each.value.repo].name]
+#   policy_arn = aws_iam_policy.pr[each.value.repo].arn
+# }
