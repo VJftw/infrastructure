@@ -5,8 +5,9 @@ set -Eeuo pipefail
 source "//build/util"
 source "//third_party/sh:shflags"
 
-DEFINE_string 'since' 'origin/main' 'find targets changed since this git reference' 's'
+DEFINE_string 'since' '' 'find targets changed since this git reference. If blank, this is best-effort automatically determined' 's'
 DEFINE_string 'out_file' 'plz-out/changes' 'path to file to write the list of changes to' 'o'
+DEFINE_boolean 'only_prs' false 'only produce a list during pull requests' 'p'
 
 FLAGS "$@" || exit $?
 eval set -- "${FLAGS_ARGV}"
@@ -19,6 +20,20 @@ fi
 
 # ensure we have origin
 git fetch --all --depth=100
+
+# automatically determine 'since' if it is blank
+if [ -z "${FLAGS_since:-}" ]; then
+    if [ -n "${GITHUB_BASE_REF:-}" ]; then
+        # If this is set, we're in a Pull Request
+        FLAGS_since="${GITHUB_BASE_REF}"
+    elif [ "${FLAGS_only_prs}" -eq "${FLAGS_TRUE}" ]; then
+        util::success "Skipping as --only_prs is set"
+        exit 0
+    else
+        # Otherwise, use the previous commit.
+        FLAGS_since="HEAD~"
+    fi
+fi
 
 mapfile -t changed_targets < <(./pleasew query changes \
     --since "${FLAGS_since}" \
