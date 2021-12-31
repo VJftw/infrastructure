@@ -11,7 +11,7 @@ please_target="$1"
 export TF_IN_AUTOMATION=true
 export TF_INPUT=0
 
-./pleasew run -p "$please_target" -- "
+./pleasew run -p "${please_target}_extended" -- "
 terraform init -lock=true -lock-timeout=30s && \
 terraform apply -refresh=true -compact-warnings -lock=true -lock-timeout=30s -auto-approve
 "
