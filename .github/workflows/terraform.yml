@@ -44,6 +44,12 @@ jobs:
         with:
           workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
           service_account: 'ghapr-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::400744676526:role/ghapr-vjftw-org-infra
+          aws-region: us-east-1
 
       - name: "Terraform: Plan"
         run: ./pleasew run -v=2 -p //build/github:terraform_plan -- "${{ matrix.terraform-workspace }}"
@@ -71,6 +77,12 @@ jobs:
         with:
           workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
           service_account: 'gha-vjftw-org-infra-main@vjp-github-actions.iam.gserviceaccount.com'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::400744676526:role/gha-vjftw-org-infra
+          aws-region: us-east-1
 
       - name: "Terraform: Apply"
         run: ./pleasew run -v=2 -p //build/github:terraform_apply -- "${{ matrix.terraform-workspace }}"

@@ -23,7 +23,7 @@ locals {
   repository_branch_per_folder_roles = flatten([
     for gh_repo, config in local.repositories : [
       for branch, branch_config in lookup(config, "branches", {}) : [
-        for folder, roles in lookup(config, "folders", {}) : [
+        for folder, roles in lookup(branch_config, "folders", {}) : [
           for role in roles : {
             repo   = gh_repo,
             branch = branch,
@@ -38,7 +38,7 @@ locals {
   repository_branch_per_project_roles = flatten([
     for gh_repo, config in local.repositories : [
       for branch, branch_config in lookup(config, "branches", {}) : [
-        for project, roles in lookup(config, "projects", {}) : [
+        for project, roles in lookup(branch_config, "projects", {}) : [
           for role in roles : {
             repo    = gh_repo,
             branch  = branch,
@@ -53,7 +53,7 @@ locals {
   repository_branch_per_bucket_roles = flatten([
     for gh_repo, config in local.repositories : [
       for branch, branch_config in lookup(config, "branches", {}) : [
-        for bucket, roles in lookup(config, "buckets", {}) : [
+        for bucket, roles in lookup(branch_config, "buckets", {}) : [
           for role in roles : {
             repo   = gh_repo,
             branch = branch,
@@ -68,7 +68,7 @@ locals {
   repository_branch_per_billing_account_roles = flatten([
     for gh_repo, config in local.repositories : [
       for branch, branch_config in lookup(config, "branches", {}) : [
-        for billing_account, roles in lookup(config, "billing_accounts", {}) : [
+        for billing_account, roles in lookup(branch_config, "billing_accounts", {}) : [
           for role in roles : {
             repo            = gh_repo,
             branch          = branch,
