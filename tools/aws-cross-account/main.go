@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -134,18 +133,19 @@ func absoluteHomedir(path string) string {
 }
 
 func ensureIniFile(path string) error {
-	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-		if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
+	
+	if _, err := os.Stat(path); err != nil {
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 			return err
 		}
 
 		if err := ini.Empty().SaveTo(path); err != nil {
 			return err
-		}	
-	}
-
-	if err := os.Chmod(path, 0600); err != nil {
-		return err
+		}
+		
+		if err := os.Chmod(path, 0600); err != nil {
+			return err
+		}
 	}
 
 	return nil
