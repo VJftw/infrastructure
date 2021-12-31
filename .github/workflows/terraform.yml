@@ -13,13 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Generate list of Terraform workspaces as JSON
-      run: "./pleasew -p -v2 run //build/github:terraform_workspaces -- plz-out/github/terraform_workspaces.json"
-    - id: set-terraform-workspaces
-      name: Set Terraform workspaces output
-      run: echo "::set-output name=terraform-workspaces::$(<plz-out/github/terraform_workspaces.json)"
+      with:
+        fetch-depth: 100
+    
+    - name: Discover changes to Please targets
+      run: |-
+        ./pleasew -p -v2 run //build/ci:changes -- \
+          --out_file="plz-out/changes"
+
+    - name: Generate Terraform Jobs
+      run: |-
+        ./pleasew -p -v2 run //build/ci/github/jobs:terraform -- \
+          --changes_file="plz-out/changes" \
+          --out_file="plz-out/github/terraform_jobs.json"
+
+    - id: set-terraform-jobs
+      name: Set Terraform jobs output
+      run: echo "::set-output name=terraform-jobs::$(<plz-out/github/terraform_jobs.json)"
     outputs:
-      terraform-workspaces: ${{ steps.set-terraform-workspaces.outputs.terraform-workspaces }}
+      terraform-jobs: ${{ steps.set-terraform-jobs.outputs.terraform-jobs }}
     
   terraform_plan:
     if: github.event_name == 'pull_request'
@@ -32,8 +44,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        terraform-workspace: ${{ fromJson(needs.generate_jobs.outputs.terraform-workspaces) }}
-    concurrency: "${{ matrix.terraform-workspace }}"
+        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.terraform-jobs) }}
+    concurrency: "${{ matrix.terraform-job }}"
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -51,8 +63,9 @@ jobs:
           role-to-assume: arn:aws:iam::400744676526:role/ghapr-vjftw-org-infra
           aws-region: us-east-1
 
-      - name: "Terraform: Plan"
-        run: ./pleasew run -v=2 -p //build/github:terraform_plan -- "${{ matrix.terraform-workspace }}"
+      - name: "Terraform Plan: ${{ matrix.terraform-job }}"
+        run: |-
+          ./pleasew -p -v2 run //build/ci/github/pull_request:terraform_plan -- "${{ matrix.terraform-job }}"
 
   terraform_apply:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -65,8 +78,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        terraform-workspace: ${{ fromJson(needs.generate_jobs.outputs.terraform-workspaces) }}
-    concurrency: "${{ matrix.terraform-workspace }}"
+        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.terraform-jobs) }}
+    concurrency: "${{ matrix.terraform-job }}"
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -84,5 +97,6 @@ jobs:
           role-to-assume: arn:aws:iam::400744676526:role/gha-vjftw-org-infra-main
           aws-region: us-east-1
 
-      - name: "Terraform: Apply"
-        run: ./pleasew run -v=2 -p //build/github:terraform_apply -- "${{ matrix.terraform-workspace }}"
+      - name: "Terraform Apply: ${{ matrix.terraform-job }}"
+        run: |-
+          ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- "${{ matrix.terraform-job }}"

@@ -14,4 +14,5 @@ def sh_script(
         cmd = "cp $SRCS $OUTS\n" + "\n".join(replace_cmds),
         visibility = visibility,
         binary = True,
+        labels = ["sh"],
     )

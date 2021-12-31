@@ -1,0 +1,1 @@
+disable=SC1091 # (info): Not following: //third_party/sh:shflags: openBinaryFile: does not exist (No such file or directory)

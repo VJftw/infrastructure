@@ -47,7 +47,7 @@ util::retry() {
 
 util::prompt() {
   prompt=$(printf "$(ansi::bold)$()❔ %s [y/N]$(ansi::resetColor)\n" "$@")
-  read -p "${prompt}" yn
+  read -rp "${prompt}" yn
   case $yn in
       [Yy]* ) ;;
       * ) util::error "Did not receive happy input, exiting."; exit 1;;
@@ -56,9 +56,16 @@ util::prompt() {
 
 util::prompt_skip() {
   prompt=$(printf "$(ansi::bold)$()❔ %s [y/N]$(ansi::resetColor)\n" "$@")
-  read -p "${prompt}" yn
+  read -rp "${prompt}" yn
   case $yn in
       [Yy]* ) return 0;;
       * ) util::warn "Did not receive happy input, skipping."; return 1;;
   esac
+}
+
+util::contains() {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
 }

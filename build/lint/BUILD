@@ -18,3 +18,13 @@ sh_script(
         "//third_party/terraform:1_1",
     ],
 )
+
+sh_script(
+    name = "sh",
+    main = "sh.sh",
+    visibility = ["PUBLIC"],
+    deps = [
+        "//build/util",
+        "//third_party/binary:shellcheck",
+    ],
+)
