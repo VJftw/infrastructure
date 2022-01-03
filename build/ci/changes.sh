@@ -25,7 +25,7 @@ git fetch --all --depth=100
 if [ -z "${FLAGS_since:-}" ]; then
     if [ -n "${GITHUB_BASE_REF:-}" ]; then
         # If this is set, we're in a Pull Request
-        FLAGS_since="${GITHUB_BASE_REF}"
+        FLAGS_since="origin/${GITHUB_BASE_REF}"
     elif [ "${FLAGS_only_prs}" -eq "${FLAGS_TRUE}" ]; then
         util::success "Skipping as --only_prs is set"
         exit 0
@@ -35,6 +35,7 @@ if [ -z "${FLAGS_since:-}" ]; then
     fi
 fi
 
+util::info "Finding changed targets between ${FLAGS_since} and ${current_ref}"
 mapfile -t changed_targets < <(./pleasew query changes \
     --since "${FLAGS_since}" \
     --level=-1
