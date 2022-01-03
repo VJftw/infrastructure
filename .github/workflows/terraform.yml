@@ -65,7 +65,7 @@ jobs:
 
       - name: "Terraform Plan: ${{ matrix.terraform-job }}"
         run: |-
-          ./pleasew -p -v2 run //build/ci/github/pull_request:terraform_plan -- "${{ matrix.terraform-job }}"
+          ./pleasew -p -v2 run //build/ci/github/pull_request:terraform_plan -- --please_target "${{ matrix.terraform-job }}"
 
   terraform_apply:
     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.generate_jobs.outputs.terraform-jobs != '[]' }}
@@ -99,4 +99,4 @@ jobs:
 
       - name: "Terraform Apply: ${{ matrix.terraform-job }}"
         run: |-
-          ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- "${{ matrix.terraform-job }}"
+          ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
