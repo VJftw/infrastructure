@@ -19,7 +19,8 @@ jobs:
     - name: Discover changes to Please targets
       run: |-
         ./pleasew -p -v2 run //build/ci:changes -- \
-          --out_file="plz-out/changes"
+          --out_file="plz-out/changes" \
+          --only_prs
 
     - name: Generate Terraform Jobs
       run: |-
