@@ -93,6 +93,8 @@ VJftw/cloud-desktops:
         vjp-terraform-state: 
           - roles/storage.objectAdmin
       projects:
+        vjp-cloud-desktops-pr: # for cleanup
+          - roles/compute.admin
         vjp-cloud-desktops:
           - roles/compute.admin
           - roles/iap.tunnelResourceAccessor
