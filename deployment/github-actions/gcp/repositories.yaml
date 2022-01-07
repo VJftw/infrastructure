@@ -66,3 +66,36 @@ VJftw/cloud-bastion:
         "My Billing Account": 
           - roles/billing.user
   
+VJftw/cloud-desktops:
+  pull_requests:
+    organization:
+      - roles/billing.viewer
+      - roles/resourcemanager.folderViewer
+      - roles/resourcemanager.organizationViewer
+    buckets:
+      vjp-sandbox-terraform-state: 
+        - roles/storage.objectAdmin
+    projects:
+      vjp-cloud-desktops-pr:
+        - roles/compute.admin
+        - roles/iap.tunnelResourceAccessor
+    billing_accounts:
+      "My Billing Account": # TODO: use a separate billing account for Sandbox?
+        - roles/billing.viewer
+    
+  branches:
+    main:
+      organization:
+        - roles/billing.viewer
+        - roles/resourcemanager.folderViewer
+        - roles/resourcemanager.organizationViewer
+      buckets:
+        vjp-terraform-state: 
+          - roles/storage.objectAdmin
+      projects:
+        vjp-cloud-desktops:
+          - roles/compute.admin
+          - roles/iap.tunnelResourceAccessor
+      billing_accounts:
+        "My Billing Account": 
+          - roles/billing.user
