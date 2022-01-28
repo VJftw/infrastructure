@@ -56,12 +56,12 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
-          service_account: 'ghapr-vjftw-org-infra@vjp-github-actions.iam.gserviceaccount.com'
+          service_account: 'ghapr-vjftw-infrastructure@vjp-github-actions.iam.gserviceaccount.com'
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::400744676526:role/ghapr-vjftw-org-infra
+          role-to-assume: arn:aws:iam::400744676526:role/ghapr-vjftw-infrastructure
           aws-region: us-east-1
 
       - name: "Terraform Plan: ${{ matrix.terraform-job }}"
@@ -90,12 +90,12 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: 'projects/76410834219/locations/global/workloadIdentityPools/github-actions/providers/github-actions'
-          service_account: 'gha-vjftw-org-infra-main@vjp-github-actions.iam.gserviceaccount.com'
+          service_account: 'gha-vjftw-infrastructure-main@vjp-github-actions.iam.gserviceaccount.com'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::400744676526:role/gha-vjftw-org-infra-main
+          role-to-assume: arn:aws:iam::400744676526:role/gha-vjftw-infrastructure-main
           aws-region: us-east-1
 
       - name: "Terraform Apply: ${{ matrix.terraform-job }}"
