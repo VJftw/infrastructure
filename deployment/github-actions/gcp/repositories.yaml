@@ -1,4 +1,4 @@
-VJftw/org-infra:
+VJftw/infrastructure:
   pull_requests:
     organization:
       - roles/billing.viewer
