@@ -1,0 +1,32 @@
+name: "Generate Terraform matrix"
+description: "Generates a Terraform job matrix"
+inputs: 
+  includes:
+    required: false
+    description: The Please labels to include from results.
+    default: ""
+  excludes:
+    required: false
+    description: The Please labels to exclude from results.
+    default: ""
+outputs:
+  terraform-jobs:
+    description: "The matrix of Terraform jobs discovered"
+    value: ${{ steps.terraform-jobs.outputs.terraform-jobs }}
+runs:
+  using: "composite"
+  steps:
+  - name: Generate Terraform Jobs
+    shell: bash
+    run: |-
+      ./pleasew -p -v2 run //build/ci/github/jobs:terraform -- \
+        --excludes="${{ inputs.excludes }}" \
+        --includes="${{ inputs.includes }}" \
+        --changes_file="plz-out/changes" \
+        --out_file="plz-out/github/terraform_jobs.json"
+
+  - id: terraform-jobs
+    name: Set Terraform jobs output
+    shell: bash
+    run: echo "::set-output name=terraform-jobs::$(<plz-out/github/terraform_jobs.json)"
+  

@@ -16,9 +16,16 @@ if [ -z "${FLAGS_please_target}" ]; then
     exit 1
 fi
 
+REPO_ROOT="$(./pleasew query reporoot)"
+OPA_BINARY="$REPO_ROOT///third_party/binary:opa"
+OPA_BUNDLE="$REPO_ROOT///policy/terraform"
+
 util::info "Running 'terraform plan' for ${FLAGS_please_target}"
 
 ./pleasew run -p "${FLAGS_please_target}" -- "
 terraform init -lock=true -lock-timeout=30s && \
-terraform apply -refresh=true -compact-warnings -lock=true -lock-timeout=30s -auto-approve
+terraform plan -refresh=true -compact-warnings -lock=true -out=tfplan.out && \
+terraform show -json tfplan.out > tfplan.json && \
+$OPA_BINARY eval --fail-defined --format pretty --bundle $OPA_BUNDLE --input tfplan.json 'data.terraform.analysis.deny[x]' && \
+terraform apply -refresh=false -compact-warnings -lock=true -lock-timeout=30s tfplan.out
 "

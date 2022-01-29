@@ -1,0 +1,12 @@
+name: "Generate Please changes"
+description: "Generates a list of please targets that have changed"
+inputs: {}
+runs:
+  using: "composite"
+  steps:
+    - name: Discover changes to Please targets
+      shell: bash
+      run: |-
+        ./pleasew -p -v2 run //build/ci:changes -- \
+          --out_file="plz-out/changes" \
+          --only_prs

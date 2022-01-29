@@ -1,0 +1,49 @@
+---
+name: "Terraform: Pull Request"
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  generate_jobs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
+    
+    - name: Determine changes
+      uses: ./.github/actions/generate/jobs
+
+    - id: terraform-jobs
+      name: Generate Terraform matrix
+      uses: ./.github/actions/generate/jobs/terraform
+    outputs:
+      terraform-jobs: ${{ steps.terraform-jobs.outputs.terraform-jobs }}
+
+  terraform_plan:
+    if: ${{ needs.generate_jobs.outputs.terraform-jobs != '[]' }}
+    name: "Plan"
+    needs: generate_jobs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    strategy:
+      fail-fast: false
+      matrix:
+        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.terraform-jobs) }}
+    concurrency: "${{ matrix.terraform-job }}"
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Authenticate
+      uses: ./.github/actions/auth
+      with:
+        role_name: ghapr-vjftw-infrastructure
+
+    - name: "Terraform Plan: ${{ matrix.terraform-job }}"
+      run: |-
+        ./pleasew -p -v2 run //build/ci/github/pull_request:terraform_plan -- --please_target "${{ matrix.terraform-job }}"
