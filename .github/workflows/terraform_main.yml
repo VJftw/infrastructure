@@ -16,10 +16,11 @@ jobs:
     - name: Determine changes
       uses: ./.github/actions/generate/jobs
 
-    - name: Generate Terraform matrix
+    - id: terraform-jobs
+      name: Generate Terraform matrix
       uses: ./.github/actions/generate/jobs/terraform
       with:
-        exclude: accounts # we'll manage accounts separately in a job before the others.
+        excludes: accounts # we'll manage accounts separately in a job before the others.
     outputs:
       terraform-jobs: ${{ steps.terraform-jobs.outputs.terraform-jobs }}
 
