@@ -11,7 +11,7 @@ util::info "Converging Accounts"
 terraform init -lock=true -lock-timeout=30s && \
 terraform apply -refresh=true -compact-warnings -lock=true -lock-timeout=30s -auto-approve
 " -
-util::green "Converged Accounts"
+util::success "Converged Accounts"
 
 # Apply AWS accounts IAM
 util::info "Converging IAM"
@@ -19,4 +19,4 @@ util::info "Converging IAM"
 terraform init -lock=true -lock-timeout=30s && \
 terraform apply -refresh=true -compact-warnings -lock=true -lock-timeout=30s -auto-approve
 " -
-util::green "Converged IAM"
+util::success "Converged IAM"
