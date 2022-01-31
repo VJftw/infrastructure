@@ -8,6 +8,7 @@ sh_script(
         "//build/ci/terraform:env",
         "//build/util",
         "//policy/terraform",
+        "//third_party/binary:opa",
         "//third_party/sh:shflags",
     ],
 )
