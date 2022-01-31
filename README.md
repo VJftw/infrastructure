@@ -1,6 +1,6 @@
 # infrastructure
 
-[![Terraform](https://github.com/VJftw/org-infra/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/VJftw/org-infra/actions/workflows/terraform.yml)
+[![Terraform: Main](https://github.com/VJftw/infrastructure/actions/workflows/terraform_main.yml/badge.svg?branch=main)](https://github.com/VJftw/infrastructure/actions/workflows/terraform_main.yml)
 
 Organisational infrastructure for my projects
 
