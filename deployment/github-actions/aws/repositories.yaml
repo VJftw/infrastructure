@@ -3,11 +3,17 @@ VJftw/infrastructure:
     accounts:
       vjp-management:
         - read-only
+      vjp-dns:
+        - read-only
   branches:
     main:
       accounts:
         vjp-management:
           - administrator
+          - OrganizationAccountAccessRole
+        vjp-dns:
+          - administrator
+          - OrganizationAccountAccessRole
 
 "VJftw/vjpatel.me":
   pull_requests:

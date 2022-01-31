@@ -3,7 +3,9 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "3.70.0"
-      configuration_aliases = [ aws.management, aws.account ]
+      configuration_aliases = [ 
+        aws.management, 
+      ]
     }
   }
 }
@@ -30,12 +32,6 @@ resource "aws_organizations_account" "account" {
   tags = {}
 }
 
-resource "aws_iam_account_alias" "alias" {
-  provider = aws.management
-
-  account_alias = aws_organizations_account.account.name
-}
-
 data "aws_organizations_organization" "org" {
   provider = aws.management
 }
@@ -48,20 +44,4 @@ data "aws_organizations_organizational_units" "ou" {
 
 locals {
   organization_unit_ids = [for ou in data.aws_organizations_organizational_units.ou.children: ou.id if ou.name == var.organizational_unit_name]
-
-  trusted_account_names = [
-    "vjp-management",
-  ]
-}
-
-module "iam" {
-  source = "//modules/account/aws/iam:iam"
-
-  providers = {
-    aws = aws.account
-  }
-
-  trusted_account_ids = [
-    for a in data.aws_organizations_organization.org.accounts: a.id if contains(local.trusted_account_names, a.name)
-  ]
 }

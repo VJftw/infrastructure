@@ -34,3 +34,21 @@ $(out_location //common/terraform:state_generator) \\
     --pull_request_state_bucket="{pull_request_state_bucket}"
       """,
     )
+
+def terraform_per_account(
+  srcs: list,
+  provider: str,
+  modules: list = [],
+):
+  subinclude(f"//accounts/{provider}:starlark")
+
+  for account in accounts:
+    name = account["name"]
+    terraform_root(
+      name = name,
+      srcs = srcs,
+      modules = modules,
+      var_files = [
+        f"//accounts/{provider}:{name}_tfvars",
+      ],
+    )

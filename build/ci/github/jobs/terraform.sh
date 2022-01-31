@@ -9,14 +9,29 @@ source "//third_party/sh:shflags"
 
 DEFINE_string 'changes_file' 'plz-out/changes' 'path to file with list of Please targets to include. This is skipped if empty/non-existent.' 'c'
 DEFINE_string 'out_file' 'plz-out/github/terraform_jobs.json' 'path to file to write the JSON list of Terraform jobs to.' 'o'
+DEFINE_string 'includes' '' 'comma separated extra labels to filter terraform jobs by.' 'i'
+DEFINE_string 'excludes' '' 'comma separated extra labels to filter terraform jobs by.' 'e'
 
 FLAGS "$@" || exit $?
 eval set -- "${FLAGS_ARGV}"
 
-mapfile -t terraform_roots < <(./pleasew query alltargets \
-    --include terraform_workspace \
-    --plain_output
+args=(
+    "query"
+    "alltargets"
+    "--plain_output"
 )
+
+include="terraform_workspace"
+if [ -n "${FLAGS_includes}" ]; then
+    include="${include},${FLAGS_includes}"
+fi
+args+=("--include" "$include")
+
+if [ -n "${FLAGS_excludes}" ]; then
+    args+=("--exclude" "${FLAGS_excludes}")
+fi
+
+mapfile -t terraform_roots < <(./pleasew "${args[@]}")
 
 # Filter terraform_roots to just changed targets if changes_file is non-empty.
 if [ -f "${FLAGS_changes_file}" ]; then
@@ -45,3 +60,5 @@ else
 fi
 
 util::success "Wrote ${#terraform_roots[@]} Terraform jobs to ${FLAGS_out_file}"
+
+cat "${FLAGS_out_file}"

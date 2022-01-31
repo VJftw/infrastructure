@@ -1,0 +1,49 @@
+
+def rego(
+    name: str,
+    srcs: list,
+    visibility: list = [],
+):
+    return genrule(
+        name = name,
+        outs = [name],
+        srcs = srcs,
+        cmd = """
+        mkdir -p $OUTS
+        for src in "$SRCS"; do
+            cp "$src" "$OUTS/"
+        done
+        """,
+        visibility = visibility,
+        labels = ["rego"],
+    )
+
+def rego_test(
+    name: str,
+    srcs: list,
+    deps: list = [],
+):
+    bundles=" ".join([f"--bundle=$(location {b})" for b in deps])
+    return gentest(
+        name = name,
+        data = srcs + deps,
+        test_tools = "//third_party/binary:opa",
+        test_cmd = f"""
+set -Euo pipefail
+test_dir=$(find . -name '*.rego' -type f | head -n1 | xargs dirname)
+$TOOLS test -v $test_dir > opa.results
+# translate to Go Test format as per (https://please.build/tests.html)
+while read p; do
+    if [[ $p == data* ]]; then
+        test_name=$(echo "$p" | cut -f1 -d:)
+        test_result=$(echo "$p" | cut -f2 -d" ")
+        test_duration_microseconds=$(echo "$p" | cut -f2 -d\( | cut -f1 -d\) | sed 's/µs//g')
+        test_duration_seconds=$(printf %.2f $(echo "$test_duration_microseconds / 1000000" | bc -l))
+        echo  "=== RUN   $test_name" >> test.results
+        echo  "--- ${{test_result}}: $test_name (${{test_duration_seconds}}s)" >> test.results
+    fi
+done <opa.results
+cat opa.results
+        """,
+        labels = ["rego"],
+    )

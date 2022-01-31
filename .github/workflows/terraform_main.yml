@@ -1,0 +1,74 @@
+---
+name: "Terraform: Main"
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  generate_jobs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
+    
+    - name: Determine changes
+      uses: ./.github/actions/generate/jobs
+
+    - name: Generate Terraform matrix
+      uses: ./.github/actions/generate/jobs/terraform
+      with:
+        exclude: accounts # we'll manage accounts separately in a job before the others.
+    outputs:
+      terraform-jobs: ${{ steps.terraform-jobs.outputs.terraform-jobs }}
+
+  manage_accounts:
+    if: ${{ needs.generate_jobs.outputs.terraform-jobs != '[]' }}
+    name: "Manage Accounts"
+    needs: generate_jobs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    concurrency: "manage_accounts"
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Authenticate
+      uses: ./.github/actions/auth
+      with:
+        role_name: gha-vjftw-infrastructure-main
+
+    - name: "Manage Accounts"
+      run: ./pleasew -p -v2 run //build/ci/github/branch:manage_accounts
+    
+
+  terraform_apply:
+    if: ${{ needs.generate_jobs.outputs.terraform-jobs != '[]' }}
+    name: "Apply"
+    needs: 
+    - generate_jobs
+    - manage_accounts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    strategy:
+      fail-fast: false
+      matrix:
+        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.terraform-jobs) }}
+    concurrency: "${{ matrix.terraform-job }}"
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Authenticate
+      uses: ./.github/actions/auth
+      with:
+        role_name: gha-vjftw-infrastructure-main
+
+    - name: "Terraform Apply: ${{ matrix.terraform-job }}"
+      run: |-
+        ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"

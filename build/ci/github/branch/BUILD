@@ -7,6 +7,18 @@ sh_script(
     deps = [
         "//build/ci/terraform:env",
         "//build/util",
+        "//policy/terraform",
+        "//third_party/sh:shflags",
+    ],
+)
+
+sh_script(
+    name = "manage_accounts",
+    main = "manage_accounts.sh",
+    visibility = ["PUBLIC"],
+    deps = [
+        "//build/ci/terraform:env",
+        "//build/util",
         "//third_party/sh:shflags",
     ],
 )

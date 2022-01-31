@@ -16,7 +16,6 @@ module "account" {
 
   providers = {
     aws.management = aws.management
-    aws.account    = aws.management # The management account is the target account in this case.
   }
 }
 

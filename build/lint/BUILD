@@ -28,3 +28,13 @@ sh_script(
         "//third_party/binary:shellcheck",
     ],
 )
+
+sh_script(
+    name = "rego",
+    main = "rego.sh",
+    visibility = ["PUBLIC"],
+    deps = [
+        "//build/util",
+        "//third_party/binary:opa",
+    ],
+)
