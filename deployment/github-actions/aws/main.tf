@@ -20,9 +20,9 @@ data "aws_organizations_organization" "org" {
 }
 
 locals {
-  account_names_to_ids = {
+  account_names_to_ids = merge({
     for a in data.aws_organizations_organization.org.accounts : a.name => a.id
-  }
+  }, { "*" = "*" })
 }
 
 module "aws_auth" {

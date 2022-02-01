@@ -1,34 +1,22 @@
 VJftw/infrastructure:
   pull_requests:
     accounts:
-      vjp-management:
-        - read-only
-      vjp-dns:
+      "*":
         - read-only
   branches:
     main:
       accounts:
-        vjp-management:
-          - administrator
-          - OrganizationAccountAccessRole
-        vjp-dns:
-          - administrator
-          - OrganizationAccountAccessRole
-        vjp-homomorphic-encryption:
+        "*":
           - administrator
           - OrganizationAccountAccessRole
 
-"VJftw/vjpatel.me":
-  pull_requests:
-    accounts:
-      vjp-website:
-        - read-only
-      vjp-management:
-        - read-only
-  branches:
-    main:
-      accounts:
-        vjp-website:
-          - administrator
-        vjp-management:
-          - account-creator
+# "VJftw/vjpatel.me":
+#   pull_requests:
+#     accounts:
+#       vjp-website:
+#         - read-only
+#   branches:
+#     main:
+#       accounts:
+#         vjp-website:
+#           - administrator
