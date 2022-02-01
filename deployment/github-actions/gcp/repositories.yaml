@@ -10,6 +10,7 @@ VJftw/infrastructure:
     buckets:
       vjp-terraform-state: 
         - roles/storage.objectViewer
+        - roles/storage.legacyBucketWriter
     billing_accounts:
       "My Billing Account":
         - roles/billing.viewer
