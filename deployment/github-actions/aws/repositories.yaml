@@ -14,6 +14,9 @@ VJftw/infrastructure:
         vjp-dns:
           - administrator
           - OrganizationAccountAccessRole
+        vjp-homomorphic-encryption:
+          - administrator
+          - OrganizationAccountAccessRole
 
 "VJftw/vjpatel.me":
   pull_requests:
