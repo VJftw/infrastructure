@@ -8,7 +8,4 @@ terraform_module(
         "variables.tf",
     ],
     visibility = ["PUBLIC"],
-    deps = [
-        "//modules/account/aws/iam",
-    ],
 )
