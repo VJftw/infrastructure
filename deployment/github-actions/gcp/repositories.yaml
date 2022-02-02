@@ -102,3 +102,22 @@ VJftw/cloud-desktops:
       billing_accounts:
         "My Billing Account": 
           - roles/billing.user
+
+
+VJftw/remote-ws:
+  pull_requests:
+    buckets:
+      vjp-terraform-state: 
+        - roles/storage.objectAdmin
+    projects:
+      vjp-remote-ws:
+        - roles/compute.viewer
+    
+  branches:
+    main:
+      buckets:
+        vjp-terraform-state: 
+          - roles/storage.objectAdmin
+      projects:
+        vjp-remote-ws:
+          - roles/compute.admin
