@@ -24,6 +24,7 @@ VJftw/infrastructure:
         - roles/resourcemanager.folderAdmin
         - roles/resourcemanager.folderIamAdmin
         - roles/resourcemanager.organizationAdmin
+        - roles/resourcemanager.projectCreator
       buckets:
         vjp-terraform-state: 
           - roles/storage.objectAdmin
