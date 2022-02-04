@@ -10,7 +10,10 @@ import input as tfplan
 # * Allowlist only for destructions.
 #########################################################################################
 
-allowlist_deleted_addresses = {"aws_autoscaling_group.my_asg"} # TODO: this should be per terraform_root
+allowlist_deleted_addresses = {
+	"aws_autoscaling_group.my_asg", # TODO: this should be per terraform_root
+	"module.account[\"vjp-remote-workspace\"].google_project.account",
+}
 
 allowlist_created_types = {
 	"aws_iam_account_alias",
