@@ -4,10 +4,14 @@ inputs:
   role_name:
     required: true
     description: "The role/service-account name to use" 
+  providers:
+    default: all
+    description: "The providers to authenticate against"
 runs:
   using: "composite"
   steps:
   - id: "gcp-auth"
+    if: inputs.providers == 'all' || inputs.providers == 'gcp'
     name: "Authenticate to Google Cloud Platform"
     uses: "google-github-actions/auth@v0"
     with:
@@ -15,6 +19,7 @@ runs:
       service_account: "${{ inputs.role_name }}@vjp-github-actions.iam.gserviceaccount.com"
 
   - name: Authenticate to Amazon Web Services
+    if: inputs.providers == 'all' || inputs.providers == 'aws'
     uses: aws-actions/configure-aws-credentials@v1
     with:
       role-to-assume: "arn:aws:iam::400744676526:role/${{ inputs.role_name }}"
