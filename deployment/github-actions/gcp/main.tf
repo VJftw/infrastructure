@@ -31,21 +31,16 @@ locals {
   repositories = yamldecode(file("repositories.yaml"))
 }
 
-module "project" {
-  source = "//modules/account/gcp:gcp"
+data "google_project" "this" {
+  provider = google-beta
 
-  domain       = "vjpatel.me"
-  project_id   = "vjp-github-actions"
-  project_name = "Github Actions"
-
-  folder_display_name = "management"
+  project_id = var.name
 }
-
 
 resource "google_project_service" "iam" {
   provider = google-beta
 
-  project = module.project.project_id
+  project = var.name
 
   service = "iam.googleapis.com"
 
@@ -55,7 +50,7 @@ resource "google_project_service" "iam" {
 resource "google_project_service" "iamcredentials" {
   provider = google-beta
 
-  project = module.project.project_id
+  project = var.name
 
   service = "iamcredentials.googleapis.com"
 

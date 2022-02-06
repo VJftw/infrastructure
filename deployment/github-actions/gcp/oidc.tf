@@ -1,6 +1,6 @@
 resource "google_iam_workload_identity_pool" "github_actions" {
   provider = google-beta
-  project  = module.project.project_id
+  project  = var.name
 
   workload_identity_pool_id = "github-actions"
   display_name              = "GitHub Actions"
@@ -9,7 +9,7 @@ resource "google_iam_workload_identity_pool" "github_actions" {
 
 resource "google_iam_workload_identity_pool_provider" "github_actions" {
   provider = google-beta
-  project  = module.project.project_id
+  project  = var.name
 
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_actions.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-actions"

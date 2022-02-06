@@ -66,7 +66,7 @@ locals {
 
 resource "google_service_account" "pr" {
   provider = google-beta
-  project  = module.project.project_id
+  project  = var.name
 
   for_each = {
     for rb in local.repository_prs : rb.repo => rb
@@ -89,7 +89,7 @@ resource "google_service_account_iam_member" "pr" {
   role               = "roles/iam.workloadIdentityUser"
 
   member = join("/", [
-    "principal://iam.googleapis.com/projects/${module.project.number}",
+    "principal://iam.googleapis.com/projects/${data.google_project.this.number}",
     "locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions.workload_identity_pool_id}",
     # repo:octo-org/octo-repo:pull_request
     "subject/repo:${each.value.repo}:pull_request",
