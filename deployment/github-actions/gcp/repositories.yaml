@@ -113,6 +113,8 @@ VJftw/remote-ws:
     projects:
       vjp-remote-ws:
         - roles/compute.viewer
+      vjp-dns:
+        - roles/dns.reader
     
   branches:
     main:
@@ -122,3 +124,5 @@ VJftw/remote-ws:
       projects:
         vjp-remote-ws:
           - roles/compute.admin
+        vjp-dns:
+          - roles/dns.admin
