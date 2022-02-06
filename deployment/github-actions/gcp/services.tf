@@ -19,7 +19,7 @@ resource "google_project_service" "github_actions" {
 
   for_each = toset(local.services)
 
-  project = module.project.project_id
+  project = var.name
   service = each.key
 
   disable_dependent_services = true
