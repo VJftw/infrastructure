@@ -1,5 +1,5 @@
 
-def rego(
+def rego_bundle(
     name: str,
     srcs: list,
     visibility: list = [],
