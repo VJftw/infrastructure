@@ -125,5 +125,6 @@ VJftw/remote-ws:
         vjp-remote-ws:
           - roles/compute.admin
           - roles/iam.serviceAccountAdmin
+          - roles/iam.securityAdmin
         vjp-dns:
           - roles/dns.admin
