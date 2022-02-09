@@ -2,12 +2,12 @@ subinclude("//build/defs:rego")
 
 rego_bundle(
     name = "common",
-    root = "vjp/common",
     srcs = [
         "contains.rego",
         "is_empty.rego",
         "to_set.rego",
     ],
+    root = "vjp/common",
     visibility = ["PUBLIC"],
 )
 

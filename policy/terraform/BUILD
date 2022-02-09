@@ -2,10 +2,10 @@ subinclude("//build/defs:rego")
 
 rego_bundle(
     name = "terraform",
-    root = "vjp/terraform",
     srcs = ["terraform.rego"],
-    deps = ["//policy/common:common"],
+    root = "vjp/terraform",
     visibility = ["PUBLIC"],
+    deps = ["//policy/common"],
 )
 
 rego_test(
@@ -15,7 +15,7 @@ rego_test(
     ],
     deps = [
         ":terraform",
-        "//policy/common:common",
+        "//policy/common",
     ],
 )
 
@@ -27,7 +27,10 @@ export_file(
 
 opa_eval(
     name = "terraform_eval",
-    bundles = [":terraform", "//policy/common:common"],
+    bundles = [
+        ":terraform",
+        "//policy/common:common",
+    ],
     query = "data.vjp.terraform.deny[_]",
     visibility = ["PUBLIC"],
 )

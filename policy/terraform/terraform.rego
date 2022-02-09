@@ -2,8 +2,8 @@ package vjp.terraform
 
 import data.vjp.common
 
-import input as tfplan
 import data.terraform
+import input as tfplan
 
 #########################################################################################
 # Design
