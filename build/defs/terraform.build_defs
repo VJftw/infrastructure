@@ -14,7 +14,31 @@ def terraform_root(
     use_remote_state: bool = True,
     remote_state_bucket: str = "vjp-terraform-state",
     pull_request_state_bucket: str = "",
+    opa_data: dict = {},
 ):
+    opa_data_cmd="set -e; echo '{\"terraform\": {}}' > $OUT"
+    for key, values in opa_data.items():
+      opa_data_cmd+=f"""
+      $(location //third_party/binary:jq) '.terraform + {{ "{key}" : [] }}' $OUT > ${{OUT}}.new
+      mv ${{OUT}}.new $OUT
+      """
+      for value in values:
+        opa_data_cmd+=f"""
+        $(location //third_party/binary:jq) '.terraform["{key}"] |= . + ["{value}"]' $OUT > ${{OUT}}.new
+        mv ${{OUT}}.new $OUT
+        """
+    opa_data=genrule(
+      name = f"_{name}#opa_data",
+      srcs = ["//policy/terraform:base_data"],
+      outs = [f"_{name}#opa_data.json"],
+      cmd = opa_data_cmd + """
+      # merge with base opa data
+      $(location //third_party/binary:jq) -s '.[0] * .[1]' $OUT $(location //policy/terraform:base_data) > ${OUT}.new
+      mv ${OUT}.new $OUT
+      """,
+      tools = ["//third_party/binary:jq"],
+    )
+
     return _upstream_terraform_root(
       name=name, 
       srcs=srcs, 
@@ -39,6 +63,7 @@ def terraform_per_account(
   srcs: list,
   provider: str,
   modules: list = [],
+  opa_data: dict = {},
 ):
   subinclude(f"//accounts/{provider}:starlark")
 
@@ -51,4 +76,5 @@ def terraform_per_account(
       var_files = [
         f"//accounts/{provider}:{name}_tfvars",
       ],
+      opa_data = opa_data,
     )

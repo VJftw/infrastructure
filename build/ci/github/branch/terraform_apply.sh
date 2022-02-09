@@ -16,9 +16,11 @@ if [ -z "${FLAGS_please_target}" ]; then
     exit 1
 fi
 
-REPO_ROOT="$(./pleasew query reporoot)"
-OPA_BINARY="$REPO_ROOT///third_party/binary:opa"
-OPA_BUNDLE="$REPO_ROOT///policy/terraform"
+OPA_EVAL="//policy/terraform:terraform_eval"
+
+per_tf_root_opa_data_target="${FLAGS_please_target//\:/\:_}#opa_data"
+./pleasew build -p "$per_tf_root_opa_data_target"
+PER_TF_ROOT_OPA_DATA="$(./pleasew query output "$per_tf_root_opa_data_target")"
 
 util::info "Running 'terraform plan' for ${FLAGS_please_target}"
 
@@ -26,6 +28,15 @@ util::info "Running 'terraform plan' for ${FLAGS_please_target}"
 terraform init -lock=true -lock-timeout=30s && \
 terraform plan -refresh=true -compact-warnings -lock=true -out=tfplan.out && \
 terraform show -json tfplan.out > tfplan.json && \
-$OPA_BINARY eval --fail-defined --format pretty --bundle $OPA_BUNDLE --input tfplan.json 'data.terraform.analysis.deny[x]' && \
+
+# if the OPA tool prints 'undefined', it is happy... 
+# It will print a table of errors if it is not happy.
+$OPA_EVAL \
+    --data $PER_TF_ROOT_OPA_DATA \
+    --input tfplan.json && \
+
+# Apply Terraform
 terraform apply -refresh=false -compact-warnings -lock=true -lock-timeout=30s tfplan.out
 "
+
+util::success "Applying Terraform for ${FLAGS_please_target} was OK!"
