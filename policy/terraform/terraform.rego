@@ -1,6 +1,9 @@
-package terraform.analysis
+package vjp.terraform
+
+import data.vjp.common
 
 import input as tfplan
+import data.terraform
 
 #########################################################################################
 # Design
@@ -23,11 +26,10 @@ deny[msg] {
 	some address
 	deleted_addresses[address]
 
-	not contains(data.allowlist_deleted_addresses, address)
+	not common.contains(data.terraform.allowlist_deleted_addresses, address)
 
 	msg := sprintf("'%s' is planned for deletion but not in the allowlist", [address])
 }
-
 
 # Maintaining an allowlist across multiple repos is unnecessary.
 # This is more suitable for a monorepo/org which needs third party review on every type of resource.
@@ -37,7 +39,7 @@ deny[msg] {
 #
 # 	created_resource := resources_per_action("create")[_]
 #
-# 	not contains(data.allowlist_created_types, created_resource.type)
+# 	not contains(data.terraform.allowlist_created_types, created_resource.type)
 #
 # 	msg := sprintf("'%s' is planned for creation but '%s' is not in the allowlist", [created_resource.address, created_resource.type])
 # }
@@ -51,12 +53,4 @@ resources_per_action(action) = resources {
 		# conditions
 		resource.change.actions[_] == action
 	]
-}
-
-contains(haystack, needle) {
-	haystack[_] = needle
-}
-
-contains_all(haystack, needles) {
-	count(needles - haystack) == 0
 }

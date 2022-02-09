@@ -7,10 +7,7 @@ sh_script(
     deps = [
         "//build/ci/terraform:env",
         "//build/util",
-        "//policy/terraform",
-        "//policy/terraform:base_data",
-        "//third_party/binary:opa",
-        "//third_party/binary:jq",
+        "//policy/terraform:terraform_eval",
         "//third_party/sh:shflags",
     ],
 )

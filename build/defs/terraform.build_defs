@@ -16,15 +16,15 @@ def terraform_root(
     pull_request_state_bucket: str = "",
     opa_data: dict = {},
 ):
-    opa_data_cmd="set -e; echo '{}' > $OUT"
+    opa_data_cmd="set -e; echo '{\"terraform\": {}}' > $OUT"
     for key, values in opa_data.items():
       opa_data_cmd+=f"""
-      $(location //third_party/binary:jq) '. + {{ "{key}" : [] }}' $OUT > ${{OUT}}.new
+      $(location //third_party/binary:jq) '.terraform + {{ "{key}" : [] }}' $OUT > ${{OUT}}.new
       mv ${{OUT}}.new $OUT
       """
       for value in values:
         opa_data_cmd+=f"""
-        $(location //third_party/binary:jq) '.["{key}"] |= . + ["{value}"]' $OUT > ${{OUT}}.new
+        $(location //third_party/binary:jq) '.terraform["{key}"] |= . + ["{value}"]' $OUT > ${{OUT}}.new
         mv ${{OUT}}.new $OUT
         """
     opa_data=genrule(

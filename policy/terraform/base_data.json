@@ -1,3 +1,5 @@
 {
-  "allowlist_deleted_addresses": []
+  "terraform": {
+    "allowlist_deleted_addresses": []
+  }
 }
