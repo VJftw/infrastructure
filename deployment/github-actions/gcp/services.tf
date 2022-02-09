@@ -11,6 +11,7 @@ locals {
     "compute.googleapis.com",
     "container.googleapis.com",
     "serviceusage.googleapis.com",
+    "dns.googleapis.com",
   ]
 }
 
