@@ -37,7 +37,7 @@ def rego_test(
     srcs: list,
     deps: list = [],
 ):
-    bundles="\\\\\n".join([f"--bundle ./$(location {b})" for b in deps])
+    bundles=" \\\n".join([f"--bundle ./$(location {b})" for b in deps])
     return gentest(
         name = name,
         data = srcs + deps,
