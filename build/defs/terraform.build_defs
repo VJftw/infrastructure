@@ -19,12 +19,12 @@ def terraform_root(
     opa_data_cmd="set -e; echo '{\"terraform\": {}}' > $OUT"
     for key, values in opa_data.items():
       opa_data_cmd+=f"""
-      $(location //third_party/binary:jq) '.terraform + {{ "{key}" : [] }}' $OUT > ${{OUT}}.new
+      $(location //third_party/binary:jq) '.terraform |= . + {{ "{key}" : [] }}' $OUT > ${{OUT}}.new
       mv ${{OUT}}.new $OUT
       """
       for value in values:
         opa_data_cmd+=f"""
-        $(location //third_party/binary:jq) '.terraform["{key}"] |= . + ["{value}"]' $OUT > ${{OUT}}.new
+        $(location //third_party/binary:jq) --arg v '{value}' '.terraform["{key}"] |= . + [$v]' $OUT > ${{OUT}}.new
         mv ${{OUT}}.new $OUT
         """
     opa_data=genrule(
@@ -33,7 +33,7 @@ def terraform_root(
       outs = [f"_{name}#opa_data.json"],
       cmd = opa_data_cmd + """
       # merge with base opa data
-      $(location //third_party/binary:jq) -s '.[0] * .[1]' $OUT $(location //policy/terraform:base_data) > ${OUT}.new
+      $(location //third_party/binary:jq) -s '.[0] * .[1]' $(location //policy/terraform:base_data) $OUT > ${OUT}.new
       mv ${OUT}.new $OUT
       """,
       tools = ["//third_party/binary:jq"],
