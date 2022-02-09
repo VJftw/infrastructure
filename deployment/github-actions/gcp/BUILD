@@ -17,4 +17,9 @@ terraform_root(
     var_files = [
         "//accounts/gcp:vjp-github-actions_tfvars",
     ],
+    opa_data = {
+        "allowlist_deleted_addresses": [
+            "google_project_iam_member.branch[\"VJftw/remote-ws:main:vjp-remote-ws:roles/iam.securityAdmin\"]",
+        ],
+    },
 )
