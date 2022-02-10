@@ -16,7 +16,9 @@ terraform_root(
     ],
     opa_data = {
         "allowlist_deleted_addresses": [
-            'google_project_iam_member.branch["VJftw/remote-ws:main:vjp-remote-ws:roles/iam.securityAdmin"]',
+            'google_project_iam_member.branch["VJftw/remote-ws:main:vjp-remote-ws:roles/compute.admin"]',
+            'google_project_iam_member.branch["VJftw/remote-ws:main:vjp-remote-ws:roles/iam.serviceAccountAdmin"]',
+            'google_project_iam_member.branch["VJftw/remote-ws:main:vjp-remote-ws:roles/iam.serviceAccountUser"]',
         ],
     },
     var_files = [

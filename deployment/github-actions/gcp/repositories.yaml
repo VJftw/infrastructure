@@ -123,9 +123,7 @@ VJftw/remote-ws:
           - roles/storage.objectAdmin
       projects:
         vjp-remote-ws:
-          - roles/compute.admin
-          - roles/iam.serviceAccountAdmin
-          - roles/iam.serviceAccountUser
+          - roles/owner
 
         vjp-dns:
           - roles/dns.admin
