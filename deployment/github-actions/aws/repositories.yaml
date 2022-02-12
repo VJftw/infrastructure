@@ -2,7 +2,7 @@ VJftw/infrastructure:
   pull_requests:
     accounts:
       "*":
-        - read-only
+        - reader
   branches:
     main:
       accounts:
@@ -14,7 +14,7 @@ VJftw/infrastructure:
 #   pull_requests:
 #     accounts:
 #       vjp-website:
-#         - read-only
+#         - reader
 #   branches:
 #     main:
 #       accounts:
