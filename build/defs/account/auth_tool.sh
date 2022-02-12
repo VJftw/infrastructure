@@ -52,9 +52,15 @@ function auth_aws {
     # Get Account Number for the given Account Alias
     current_profile="${AWS_PROFILE:-default}"
     aws_account_number=$(aws organizations list-accounts --output=text | grep "aws+${account_name}@vjpatel.me" | awk '{ print $4 }')
-    role_arn="arn:aws:iam::${aws_account_number}:role/${role}"
+
+    # exit 2 if the account doesn't appear to be created
+    if [ -z "$aws_account_number" ]; then
+        util::warn "could not find account number for '$account_name', assuming it has not been created yet."
+        exit 2
+    fi
 
     # Write a profile for the alias to assume the role
+    role_arn="arn:aws:iam::${aws_account_number}:role/${role}"
     aws --profile "$account_name" configure set "role_arn" "$role_arn"
     if [ -v AWS_ACCESS_KEY_ID ]; then
         aws --profile "$account_name" configure set "credential_source " "Environment"
@@ -62,7 +68,6 @@ function auth_aws {
         # only set the source_profile if it exists
         aws --profile "$account_name" configure set "source_profile" "$current_profile"
     fi
-
 
     # Test if we've managed to authenticate successfully
     if ! aws --profile "$account_name" sts get-caller-identity --output=text > /dev/null; then
@@ -72,6 +77,11 @@ function auth_aws {
 }
 
 function auth_gcp {
+    # exit 2 if the project doesn't appear to be created
+    if ! gcloud projects list | grep -w "$account_name" > /dev/null; then
+        util::warn "could not find project for '$account_name', assuming it has not been created yet."
+        exit 2
+    fi
     # Nothing to do as cross-project authorization in GCP doesn't require a new identity.
     return
 }

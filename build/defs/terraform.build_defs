@@ -43,7 +43,9 @@ def terraform_root(
     account_auth_cmds=[]
     account_auth_trgts=[]
     for account_auth_trgt, role_config in account_auths.items():
-      account_auth_cmd=f"$(out_location {account_auth_trgt})"
+      account_auth_cmd=f"""
+set +e
+$(out_location {account_auth_trgt})"""
       if "branches" in role_config:
         branch_roles=role_config["branches"].items()
         branch_roles_flag_value=",".join([f"{b}:{r}" for b, r in branch_roles])
@@ -51,6 +53,17 @@ def terraform_root(
       if "pull_request" in role_config:
         pull_request_flag_value=role_config["pull_request"]
         account_auth_cmd+=f" \\\\\n--pull_request_role=\"{pull_request_flag_value}\""
+      
+      # skip terraform if we cannot authenticate and we suspect it's not been created yet (exit code 2).
+      account_auth_cmd+="""
+exitVal=\\\$?
+if [ \\\$exitVal -eq 2 ]; then 
+  exit 0 
+elif [ \\\$exitVal -ne 0 ]; then 
+  exit \\\$exitVal 
+fi
+set -e
+    """
 
       account_auth_cmds+=[account_auth_cmd]
       account_auth_trgts+=[account_auth_trgt]
