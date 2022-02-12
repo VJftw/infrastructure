@@ -15,5 +15,5 @@ provider "aws" {
   alias = "management"
 
   profile = "vjp-management"
-  region = "us-east-1"
+  region  = "us-east-1"
 }

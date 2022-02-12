@@ -44,7 +44,7 @@ elif [ -n "${FLAGS_branch_roles}" ]; then
 fi
 
 account_name="$(grep "^name" "${FLAGS_account_tfvars}" | cut -f2 -d\")"
-account_provider="$(basename $(dirname "${FLAGS_account_tfvars}"))"
+account_provider="$(basename "$(dirname "${FLAGS_account_tfvars}")")"
 
 util::info "Authenticating as '$role' to '$account_provider/$account_name'"
 
@@ -67,6 +67,7 @@ function auth_aws {
 
 function auth_gcp {
     # Nothing to do as cross-project authorization in GCP doesn't require a new identity.
+    return
 }
 
 case "$account_provider" in

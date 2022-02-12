@@ -10,11 +10,11 @@ terraform_root(
         "repositories.yaml",
     ],
     account_auths = {
-      "//accounts/aws:vjp-management_auth": {
-        "branches": {
-          "main": "administrator",
+        "//accounts/aws:vjp-management_auth": {
+            "branches": {
+                "main": "administrator",
+            },
+            "pull_request": "reader",
         },
-        "pull_request": "reader",
-      },
     },
 )

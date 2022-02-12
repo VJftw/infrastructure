@@ -10,11 +10,11 @@ terraform_root(
         "root.tf",
     ],
     account_auths = {
-      "//accounts/aws:vjp-dns_auth": {
-        "branches": {
-          "main": "administrator",
+        "//accounts/aws:vjp-dns_auth": {
+            "branches": {
+                "main": "administrator",
+            },
+            "pull_request": "reader",
         },
-        "pull_request": "reader",
-      },
     },
 )

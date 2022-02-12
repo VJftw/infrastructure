@@ -29,7 +29,7 @@ provider "aws" {
   alias = "management"
 
   profile = "vjp-management"
-  region = "us-east-1"
+  region  = "us-east-1"
 }
 
 data "aws_caller_identity" "current" {
