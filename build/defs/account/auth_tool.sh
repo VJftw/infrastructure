@@ -61,6 +61,8 @@ function auth_aws {
 
     # Write a profile for the alias to assume the role
     role_arn="arn:aws:iam::${aws_account_number}:role/${role}"
+    exec {lock_fd}>/var/lock/aws_shared_credentials || exit 1
+    flock --timeout 10 "$lock_fd" || { util::error "flock() failed." >&2; exit 1; }    
     aws --profile "$account_name" configure set "role_arn" "$role_arn"
     if [ -v AWS_ACCESS_KEY_ID ]; then
         aws --profile "$account_name" configure set "credential_source " "Environment"
@@ -68,6 +70,8 @@ function auth_aws {
         # only set the source_profile if it exists
         aws --profile "$account_name" configure set "source_profile" "$current_profile"
     fi
+
+    flock --unlock "$lock_fd"
 
     # Test if we've managed to authenticate successfully
     if ! aws --profile "$account_name" sts get-caller-identity --output=text > /dev/null; then
