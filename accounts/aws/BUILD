@@ -1,3 +1,5 @@
+subinclude("//build/defs:account")
+
 filegroup(
     name = "aws",
     srcs = glob(["**.tfvars"]),
@@ -5,14 +7,7 @@ filegroup(
 )
 
 for f in glob(["**.tfvars"]):
-    name = basename(f).split(".")[0]
-
-    # _tfvars
-    export_file(
-        name = f"{name}_tfvars",
-        src = f,
-        visibility = ["PUBLIC"],
-    )
+    account(f)
 
 genrule(
     name = "starlark",

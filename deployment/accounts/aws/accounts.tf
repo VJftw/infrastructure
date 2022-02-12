@@ -8,7 +8,7 @@ module "account" {
   source = "//modules/account/aws:aws"
 
   providers = {
-    aws.management = aws.management
+    aws.management = aws
   }
 
   base_email = "aws@vjpatel.me"

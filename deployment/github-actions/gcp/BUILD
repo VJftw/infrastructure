@@ -11,9 +11,6 @@ terraform_root(
         "services.tf",
         "variables.tf",
     ],
-    modules = [
-        "//modules/account/gcp:gcp",
-    ],
     opa_data = {
         "allowlist_deleted_addresses": [
             'google_project_iam_member.branch["VJftw/remote-ws:main:vjp-remote-ws:roles/compute.admin"]',

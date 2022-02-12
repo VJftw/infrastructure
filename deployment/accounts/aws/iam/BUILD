@@ -6,8 +6,11 @@ terraform_per_account(
         "main.tf",
         "variables.tf",
     ],
-    modules = [
-        "//modules/auth/aws:aws",
-    ],
+    per_account_roles = {
+        "branches": {
+            "main": "administrator",
+        },
+        "pull_request": "reader",
+    },
     provider = "aws",
 )

@@ -1,0 +1,27 @@
+def account(
+    tfvars_file: str,
+    default_role: str = "administrator",
+):
+    name = basename(tfvars_file).split(".")[0]
+
+    # _tfvars
+    tfvars=export_file(
+        name = f"{name}_tfvars",
+        src = tfvars_file,
+        visibility = ["PUBLIC"],
+    )
+
+    # _auth
+    sh_cmd(
+        name = f"{name}_auth",
+        cmd = f"""
+set -Eeuo pipefail
+$(out_location //build/defs/account:auth_tool) \\\\
+    --account_tfvars="$(out_location {tfvars})" \\\\
+    --default_role="{default_role}" \\\\
+    "\\\$@"
+        """,
+        shell = "/usr/bin/env bash",
+        data = ["//build/defs/account:auth_tool", tfvars],
+        visibility = ["PUBLIC"],
+    )
