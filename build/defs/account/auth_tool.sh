@@ -56,7 +56,13 @@ function auth_aws {
 
     # Write a profile for the alias to assume the role
     aws --profile "$account_name" configure set "role_arn" "$role_arn"
-    aws --profile "$account_name" configure set "source_profile" "$current_profile"
+    if [ -v AWS_ACCESS_KEY_ID ]; then
+        aws --profile "$account_name" configure set "credential_source " "Environment"
+    elif aws configure list-profiles | grep "$current_profile" > /dev/null; then
+        # only set the source_profile if it exists
+        aws --profile "$account_name" configure set "source_profile" "$current_profile"
+    fi
+
 
     # Test if we've managed to authenticate successfully
     if ! aws --profile "$account_name" sts get-caller-identity --output=text > /dev/null; then
