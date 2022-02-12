@@ -40,7 +40,7 @@ elif [ -n "${FLAGS_branch_state_buckets}" ]; then
         )"
 
         if [ -n "${branch_bucket}" ]; then
-            remote_state_bucket="$(echo "${branch_bucket}" | cut -f1 -d:)"
+            remote_state_bucket="$(echo "${branch_bucket}" | cut -f2 -d:)"
         else
             util::warn "bucket not configured for ${current_branch}"
         fi

@@ -33,6 +33,13 @@ terraform_root(
     labels = ["accounts"],
     modules = [
         "//modules/account/aws:aws",
-        "//modules/auth/aws:aws",
     ],
+    account_auths = {
+      "//accounts/aws:vjp-management_auth": {
+        "branches": {
+          "main": "administrator",
+        },
+        "pull_request": "reader",
+      },
+    },
 )

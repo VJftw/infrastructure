@@ -7,5 +7,5 @@ terraform_module(
         "outputs.tf",
         "variables.tf",
     ],
-    visibility = ["PUBLIC"],
+    visibility = ["//deployment/accounts/gcp:all"], # Manage all GCP projects in a single root module.
 )

@@ -6,20 +6,6 @@ resource "aws_organizations_organization" "org" {
   feature_set = "ALL"
 }
 
-module "account" {
-  source = "//modules/account/aws:aws"
-
-  base_email = "aws@vjpatel.me"
-  name       = "vjp-management"
-
-  organizational_unit_name = "management"
-
-  providers = {
-    aws.management = aws.management
-  }
-}
-
-
 // organizational roles
 
 locals {

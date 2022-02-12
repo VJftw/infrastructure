@@ -3,10 +3,10 @@ locals {
     "administrator" : {
       "managed_policy_arns" : ["arn:aws:iam::aws:policy/AdministratorAccess"]
     }
-    "read-only" : {
+    "reader" : {
       "managed_policy_arns" : ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
     }
-    "view-only" : {
+    "viewer" : {
       "managed_policy_arns" : ["arn:aws:iam::aws:policy/job-function/ViewOnlyAccess"],
     }
   }

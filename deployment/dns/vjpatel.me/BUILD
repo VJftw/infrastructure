@@ -3,15 +3,18 @@ subinclude("//build/defs:terraform")
 terraform_root(
     name = "vjpatel.me",
     srcs = [
-        "dns.tf",
+        "aws.tf",
         "gcp.tf",
         "gsuite.tf",
         "main.tf",
         "root.tf",
     ],
-    modules = [
-        "//modules/account/aws:aws",
-        "//modules/account/gcp:gcp",
-        "//modules/auth/aws:aws",
-    ],
+    account_auths = {
+      "//accounts/aws:vjp-dns_auth": {
+        "branches": {
+          "main": "administrator",
+        },
+        "pull_request": "reader",
+      },
+    },
 )

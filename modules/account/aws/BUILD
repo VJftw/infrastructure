@@ -7,5 +7,5 @@ terraform_module(
         "outputs.tf",
         "variables.tf",
     ],
-    visibility = ["PUBLIC"],
+    visibility = ["//deployment/accounts/aws:all"], # Manage all AWS accounts in a single root module.
 )
