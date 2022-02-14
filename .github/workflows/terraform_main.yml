@@ -16,23 +16,36 @@ jobs:
     - name: Determine changes
       uses: ./.github/actions/generate/jobs
 
-    - id: terraform-jobs
+    - id: accounts-terraform-jobs
+      name: Generate Terraform matrix
+      uses: ./.github/actions/generate/jobs/terraform
+      with:
+        includes: accounts # we'll manage accounts separately in a job before the others.
+
+    - id: remaining-terraform-jobs
       name: Generate Terraform matrix
       uses: ./.github/actions/generate/jobs/terraform
       with:
         excludes: accounts # we'll manage accounts separately in a job before the others.
-    outputs:
-      terraform-jobs: ${{ steps.terraform-jobs.outputs.terraform-jobs }}
 
-  manage_accounts:
-    if: ${{ needs.generate_jobs.outputs.terraform-jobs != '[]' }}
-    name: "Manage Accounts"
-    needs: generate_jobs
+    outputs:
+      accounts-terraform-jobs: ${{ steps.accounts-terraform-jobs.outputs.terraform-jobs }}
+      remaining-terraform-jobs: ${{ steps.remaining-terraform-jobs.outputs.terraform-jobs }}
+
+  terraform_apply_accounts:
+    if: ${{ needs.generate_jobs.outputs.accounts-terraform-jobs != '[]' }}
+    name: "Apply"
+    needs: 
+    - generate_jobs
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
       id-token: 'write'
-    concurrency: "manage_accounts"
+    strategy:
+      fail-fast: false
+      matrix:
+        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.accounts-terraform-jobs) }}
+    concurrency: "${{ matrix.terraform-job }}"
     steps:
     - name: Check out code
       uses: actions/checkout@v2
@@ -42,16 +55,17 @@ jobs:
       with:
         role_name: gha-vjftw-infrastructure-main
 
-    - name: "Manage Accounts"
-      run: ./pleasew -p -v2 run //build/ci/github/branch:manage_accounts
+    - name: "Terraform Apply: ${{ matrix.terraform-job }}"
+      run: |-
+        ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
     
 
-  terraform_apply:
-    if: ${{ needs.generate_jobs.outputs.terraform-jobs != '[]' }}
+  terraform_apply_remaining:
+    if: ${{ needs.generate_jobs.outputs.remaining-terraform-jobs != '[]' }}
     name: "Apply"
     needs: 
     - generate_jobs
-    - manage_accounts
+    - terraform_apply_accounts
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -59,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.terraform-jobs) }}
+        terraform-job: ${{ fromJson(needs.generate_jobs.outputs.remaining-terraform-jobs) }}
     concurrency: "${{ matrix.terraform-job }}"
     steps:
     - name: Check out code
