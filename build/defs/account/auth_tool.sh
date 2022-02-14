@@ -70,7 +70,7 @@ function auth_aws {
     fi
 
     # Test if we've managed to authenticate successfully
-    if ! aws --profile "$account_name" sts get-caller-identity --output=text > /dev/null; then
+    if ! aws --profile "$account_name" sts get-caller-identity --output=text; then
         util::error "could not authenticate to AWS as '${role_arn}' ($account_name/$role)"
         exit 1
     fi
