@@ -49,6 +49,7 @@ account_provider="$(basename "$(dirname "${FLAGS_account_tfvars}")")"
 util::info "Authenticating as '$role' to '$account_provider/$account_name'"
 
 function auth_aws {
+    export AWS_PAGER=""
     # Get Account Number for the given Account Alias
     current_profile="${AWS_PROFILE:-default}"
     aws_account_number=$(aws organizations list-accounts --output=text | grep "aws+${account_name}@vjpatel.me" | awk '{ print $4 }')
@@ -62,18 +63,30 @@ function auth_aws {
     # Write a profile for the alias to assume the role
     role_arn="arn:aws:iam::${aws_account_number}:role/${role}"
     aws --profile "$account_name" configure set "role_arn" "$role_arn"
+    util::info "set role_arn as '$role_arn' for '$account_name'"
     if [ -v AWS_ACCESS_KEY_ID ]; then
         aws --profile "default" configure set "aws_access_key_id" "$AWS_ACCESS_KEY_ID"
+        util::info "set aws_access_key_id for 'default'"
     fi
     if [ -v AWS_SECRET_ACCESS_KEY ]; then
         aws --profile "default" configure set "aws_secret_access_key" "$AWS_SECRET_ACCESS_KEY"
+        util::info "set aws_secret_access_key for 'default'"
     fi
     if [ -v AWS_SESSION_TOKEN ]; then
         aws --profile "default" configure set "aws_session_token" "$AWS_SESSION_TOKEN"
+        util::info "set aws_session_token for 'default'"
     fi
     if aws configure list-profiles | grep "$current_profile" > /dev/null; then
-        # only set the source_profile if it exists
+        # Only set the source_profile if it exists
         aws --profile "$account_name" configure set "source_profile" "$current_profile"
+        util::info "set source_profile as '$current_profile' for '$account_name'"
+    fi
+
+    # If we're an IAM user, set the role_session_name
+    if aws sts get-caller-identity --output=text | awk '{ print $2 }' | grep "arn:aws:iam::.*:user/" > /dev/null; then
+        username="$(aws sts get-caller-identity --output=text | awk '{ print $2 }' | rev | cut -f1 -d/ | rev)"
+        aws --profile "$account_name" configure set "role_session_name" "$username"
+        util::info "set role_session_name as '$username' for '$account_name'"
     fi
 
     # Test if we've managed to authenticate successfully
@@ -89,7 +102,7 @@ function auth_gcp {
         util::warn "could not find project for '$account_name', assuming it has not been created yet."
         exit 2
     fi
-    # Nothing to do as cross-project authorization in GCP doesn't require a new identity.
+    # Nothing to do as cross-project authorization in GCP doesn't require becoming a new identity.
     return
 }
 

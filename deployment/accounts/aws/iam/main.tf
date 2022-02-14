@@ -8,9 +8,19 @@ terraform {
 }
 
 locals {
-  trusted_account_names = [
-    "vjp-management", # we only keep identities in the management account.
-  ]
+  account_names_to_ids = { for a in data.aws_organizations_organization.org.accounts : a.name => a.id }
+
+  trusted_account_iam_users = {
+    "vjp-management" : [
+      "vjftw@remote-ws-vjpatel-me",
+    ],
+  }
+
+  trusted_account_oidc_providers = {
+    "vjp-management" : [
+      "token.actions.githubusercontent.com",
+    ]
+  }
 }
 
 provider "aws" {
