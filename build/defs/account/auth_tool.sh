@@ -63,8 +63,15 @@ function auth_aws {
     role_arn="arn:aws:iam::${aws_account_number}:role/${role}"
     aws --profile "$account_name" configure set "role_arn" "$role_arn"
     if [ -v AWS_ACCESS_KEY_ID ]; then
-        aws --profile "$account_name" configure set "credential_source" "Environment"
-    elif aws configure list-profiles | grep "$current_profile" > /dev/null; then
+        aws --profile "default" configure set "aws_access_key_id" "$AWS_ACCESS_KEY_ID"
+    fi
+    if [ -v AWS_SECRET_ACCESS_KEY ]; then
+        aws --profile "default" configure set "aws_secret_access_key" "$AWS_SECRET_ACCESS_KEY"
+    fi
+    if [ -v AWS_SESSION_TOKEN ]; then
+        aws --profile "default" configure set "aws_session_token" "$AWS_SESSION_TOKEN"
+    fi
+    if aws configure list-profiles | grep "$current_profile" > /dev/null; then
         # only set the source_profile if it exists
         aws --profile "$account_name" configure set "source_profile" "$current_profile"
     fi
