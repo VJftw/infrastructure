@@ -63,6 +63,11 @@ elif [ \\\$exitVal -ne 0 ]; then
   exit \\\$exitVal 
 fi
 set -e
+
+# unset AWS credentials in environment
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+unset AWS_SESSION_TOKEN
     """
 
       account_auth_cmds+=[account_auth_cmd]
