@@ -16,5 +16,11 @@ terraform_root(
             },
             "pull_request": "reader",
         },
+        "//accounts/aws:vjp-management_auth": {
+            "branches": {
+                "main": "administrator",
+            },
+            "pull_request": "reader",
+        },
     },
 )
