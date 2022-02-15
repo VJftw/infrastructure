@@ -22,3 +22,24 @@ resource "google_project_service" "logging" {
 
   disable_dependent_services = true
 }
+
+resource "google_storage_bucket_iam_binding" "binding" {
+  provider = google-beta
+
+  bucket = google_storage_bucket.audit_csp.name
+  role   = "roles/storage.objectCreator"
+
+  members = [
+    google_logging_project_sink.audit_csp.writer_identity,
+  ]
+}
+
+resource "google_project_iam_member" "binding" {
+  provider = google-beta.logs
+
+  project = "vjp-logs"
+
+  role = "roles/logging.bucketWriter"
+
+  member = google_logging_project_sink.audit_csp.writer_identity
+}
