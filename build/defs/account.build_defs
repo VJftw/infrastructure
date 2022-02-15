@@ -25,3 +25,41 @@ $(out_location //build/defs/account:auth_tool) \\\\
         data = ["//build/defs/account:auth_tool", tfvars],
         visibility = ["PUBLIC"],
     )
+
+def provider(
+    name: str,
+):
+    fg=filegroup(
+        name = name,
+        srcs = glob(["**.tfvars"]),
+        visibility = ["PUBLIC"],
+    )
+
+    for f in glob(["**.tfvars"]):
+        account(f)
+
+    genrule(
+        name = "starlark",
+        srcs = [fg],
+        outs = ["accounts.starlark"],
+        cmd = """
+    set -Eeuox pipefail
+    files=($(find accounts/ -type f -name '*.tfvars'))
+    echo '[]' > $OUTS
+
+    for f in "${files[@]}"; do
+
+        $TOOLS \\
+            --arg name "$(cat $f | grep 'name' | cut -f2 -d\\")" \\
+            --arg environment "$(cat $f | grep 'environment' | cut -f2 -d\\")" \\
+            '. += [{ "name": $name, "environment": $environment }]' \\
+            $OUTS > ${OUTS}.new
+        mv ${OUTS}.new $OUTS
+
+    done
+
+    sed -i '1s/^/accounts = /' $OUTS
+        """,
+        tools = ["//third_party/binary:jq"],
+        visibility = ["PUBLIC"],
+    )
