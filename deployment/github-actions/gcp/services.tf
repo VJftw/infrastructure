@@ -12,6 +12,7 @@ locals {
     "container.googleapis.com",
     "serviceusage.googleapis.com",
     "dns.googleapis.com",
+    "logging.googleapis.com",
   ]
 }
 
