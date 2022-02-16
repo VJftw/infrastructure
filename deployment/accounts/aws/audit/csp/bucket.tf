@@ -1,5 +1,6 @@
 locals {
   bucket_name = "${var.name}-audit-csp"
+  bucket_arn  = "arn:aws:s3:::${local.bucket_name}"
 }
 resource "aws_s3_bucket" "audit_csp" {
   provider = aws.target
@@ -48,18 +49,18 @@ data "aws_iam_policy_document" "bucket_kms" {
     sid = "Allow local account"
 
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.target.account_id}:root"]
     }
 
-    actions = ["kms:*"]
+    actions   = ["kms:*"]
     resources = ["*"]
   }
 
   statement {
     sid = "Allow CloudTrail"
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
     }
 
@@ -72,15 +73,15 @@ data "aws_iam_policy_document" "bucket_kms" {
     resources = ["*"]
 
     condition {
-      test = "StringLike"
+      test     = "StringLike"
       variable = "kms:EncryptionContext:aws:cloudtrail:arn"
-      values = [aws_cloudtrail.audit_csp.arn]
+      values   = [local.cloudtrail_arn]
     }
 
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "aws:SourceArn"
-      values = [aws_cloudtrail.audit_csp.arn]
+      values   = [local.cloudtrail_arn]
     }
   }
 }
@@ -127,7 +128,7 @@ data "aws_iam_policy_document" "csp_audit" {
   provider = aws.target
 
   statement {
-    sid = "AWSCloudTrailAclCheck20131101"
+    sid = "AWSCloudTrailAclCheck"
     principals {
       type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
@@ -139,13 +140,11 @@ data "aws_iam_policy_document" "csp_audit" {
       "s3:GetBucketAcl",
     ]
 
-    resources = [
-      "arn:aws:s3:::${local.bucket_name}"
-    ]
+    resources = [local.bucket_arn]
   }
 
   statement {
-    sid = "AWSCloudTrailWrite20131101"
+    sid = "AWSCloudTrailWrite"
 
     principals {
       type        = "Service"
@@ -160,16 +159,16 @@ data "aws_iam_policy_document" "csp_audit" {
     ]
 
     resources = [
-      "arn:aws:s3:::${local.bucket_name}/*",
+      "${local.bucket_arn}/*",
     ]
 
-    # condition {
-    #   test     = "StringEquals"
-    #   variable = "aws:SourceArn"
-    #   values   = [
-    #     aws_cloudtrail.audit_csp.arn,
-    #   ]
-    # }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values = [
+        local.cloudtrail_arn,
+      ]
+    }
 
     condition {
       test     = "StringEquals"
@@ -188,7 +187,7 @@ data "aws_iam_policy_document" "csp_audit" {
     }
     actions = ["s3:*"]
     resources = [
-      "arn:aws:s3:::${local.bucket_name}/*"
+      "${local.bucket_arn}/*"
     ]
     condition {
       test     = "Bool"
@@ -201,8 +200,8 @@ data "aws_iam_policy_document" "csp_audit" {
 resource "aws_s3_bucket_public_access_block" "audit_csp" {
   bucket = aws_s3_bucket.audit_csp.id
 
-  block_public_acls = true
-  ignore_public_acls = true
-  block_public_policy = true
+  block_public_acls       = true
+  ignore_public_acls      = true
+  block_public_policy     = true
   restrict_public_buckets = true
 }

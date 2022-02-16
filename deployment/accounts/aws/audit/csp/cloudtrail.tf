@@ -1,5 +1,6 @@
 locals {
   cloudtrail_name = "audit-csp"
+  cloudtrail_arn  = "arn:aws:cloudtrail:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:trail/${local.cloudtrail_name}"
 }
 resource "aws_cloudtrail" "audit_csp" {
   provider       = aws
@@ -42,18 +43,18 @@ data "aws_iam_policy_document" "cloudtrail_kms" {
     sid = "Allow local account"
 
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.source.account_id}:root"]
     }
 
-    actions = ["kms:*"]
+    actions   = ["kms:*"]
     resources = ["*"]
   }
 
   statement {
     sid = "Allow CloudTrail"
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
     }
 
@@ -66,17 +67,17 @@ data "aws_iam_policy_document" "cloudtrail_kms" {
     resources = ["*"]
 
     condition {
-      test = "StringLike"
+      test     = "StringLike"
       variable = "kms:EncryptionContext:aws:cloudtrail:arn"
       values = [
-        "arn:aws:cloudtrail:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:trail/${local.cloudtrail_name}",
+        local.cloudtrail_arn,
       ]
     }
 
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "aws:SourceArn"
-      values = ["arn:aws:cloudtrail:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:trail/${local.cloudtrail_name}"]
+      values   = [local.cloudtrail_arn]
     }
   }
 }
