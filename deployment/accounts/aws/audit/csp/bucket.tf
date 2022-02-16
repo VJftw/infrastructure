@@ -198,6 +198,8 @@ data "aws_iam_policy_document" "csp_audit" {
 }
 
 resource "aws_s3_bucket_public_access_block" "audit_csp" {
+  provider = aws.target
+
   bucket = aws_s3_bucket.audit_csp.id
 
   block_public_acls       = true
