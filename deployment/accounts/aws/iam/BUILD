@@ -8,7 +8,7 @@ terraform_per_account(
     ],
     per_account_roles = {
         "branches": {
-            "main": "administrator",
+            "main": "OrganizationAccountAccessRole",
         },
         "pull_request": "reader",
     },
