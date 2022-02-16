@@ -21,25 +21,19 @@ fi
 
 role="${FLAGS_default_role}"
 
-if [ -n "${FLAGS_pull_request_role}" ]; then
-    # If there's a role we should use for PRs
-    if [ -n "${GITHUB_BASE_REF:-}" ]; then
-        # If this is set, we're in a Pull Request
-        role="${FLAGS_pull_request_role}"
-    fi
-elif [ -n "${FLAGS_branch_roles}" ]; then
-    # If there's a role we should use for branches
-    current_branch="${GITHUB_REF_NAME:-}"
-    if [ -n "${current_branch}" ]; then
-        branch_role="$(echo "${FLAGS_branch_roles}" \
-            | grep -o "${current_branch}:[^,:]*" || true
-        )"
+if [ -n "${FLAGS_pull_request_role}" ] && [ -n "${GITHUB_BASE_REF:-}" ]; then
+    # If there's a role we should use for PRs and we're in a Pull Request in Github Actions.
+    role="${FLAGS_pull_request_role}"
+elif [ -n "${FLAGS_branch_roles}" ] && [ -n "${GITHUB_REF_NAME:-}" ]; then
+    # If there's a role we should use for branches and we're on a branch in Github Actions.
+    branch_role="$(echo "${FLAGS_branch_roles}" \
+        | grep -o "${GITHUB_REF_NAME}:[^,:]*" || true
+    )"
 
-        if [ -n "${branch_role}" ]; then
-            role="$(echo "${branch_role}" | cut -f2 -d:)"
-        else
-            util::warn "role not configured for ${current_branch}"
-        fi
+    if [ -n "${branch_role}" ]; then
+        role="$(echo "${branch_role}" | cut -f2 -d:)"
+    else
+        util::warn "role not configured for ${GITHUB_REF_NAME}"
     fi
 fi
 
