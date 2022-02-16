@@ -65,11 +65,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit_csp" {
     }
 
     status = "Enabled"
-
-    transition {
-      days          = 3
-      storage_class = "STANDARD_IA"
-    }
   }
 }
 
