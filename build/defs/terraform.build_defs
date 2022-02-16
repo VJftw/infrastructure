@@ -103,6 +103,7 @@ def terraform_per_account(
   opa_data: dict = {},
   per_account_roles: dict = {},
   account_auths: dict = {},
+  labels: list = [],
 ):
   subinclude(f"//accounts/{provider}:starlark")
 
@@ -119,4 +120,5 @@ def terraform_per_account(
       account_auths = {
         f"//accounts/{provider}:{name}_auth": per_account_roles,
       } | account_auths,
+      labels = labels,
     )

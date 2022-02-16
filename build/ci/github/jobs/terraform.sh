@@ -28,7 +28,11 @@ fi
 args+=("--include" "$include")
 
 if [ -n "${FLAGS_excludes}" ]; then
-    args+=("--exclude" "${FLAGS_excludes}")
+    # we want excludes to be OR'd so we pass them as unique flags.
+    mapfile -t excludes < <(echo "${FLAGS_excludes//,/ }")
+    for exclude in "${excludes[@]}"; do
+        args+=("--exclude" "${exclude}")
+    done
 fi
 
 mapfile -t terraform_roots < <(./pleasew "${args[@]}")

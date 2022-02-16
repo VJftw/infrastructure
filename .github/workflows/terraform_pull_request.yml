@@ -44,6 +44,6 @@ jobs:
       with:
         role_name: ghapr-vjftw-infrastructure
 
-    - name: "Terraform Plan: ${{ matrix.terraform-job }}"
+    - name: "${{ matrix.terraform-job }}"
       run: |-
         ./pleasew -p -v2 run //build/ci/github/pull_request:terraform_plan -- --please_target "${{ matrix.terraform-job }}"
