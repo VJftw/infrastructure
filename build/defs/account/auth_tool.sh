@@ -52,7 +52,7 @@ function auth_aws {
     export AWS_PAGER=""
     # Get Account Number for the given Account Alias
     current_profile="${AWS_PROFILE:-default}"
-    aws_account_number=$(aws organizations list-accounts --output=text | grep "aws+${account_name}@vjpatel.me" | awk '{ print $4 }')
+    aws_account_number=$(aws organizations list-accounts --output=text | grep "aws+${account_name}@vjpatel.me" | awk '{ print $4 }' || true)
 
     # exit 2 if the account doesn't appear to be created
     if [ -z "$aws_account_number" ]; then
