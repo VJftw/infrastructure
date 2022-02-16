@@ -44,6 +44,10 @@ util::info "Authenticating as '$role' to '$account_provider/$account_name'"
 
 function auth_aws {
     export AWS_PAGER=""
+    # Skip if profile already exists
+    if aws configure list-profiles | grep -w "${account_name}" > /dev/null; then
+        return
+    fi
     # Get Account Number for the given Account Alias
     current_profile="${AWS_PROFILE:-default}"
     aws_account_number=$(aws organizations list-accounts --output=text | grep "aws+${account_name}@vjpatel.me" | awk '{ print $4 }' || true)
