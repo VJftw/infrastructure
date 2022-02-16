@@ -6,6 +6,7 @@ terraform_per_account(
         "main.tf",
         "variables.tf",
     ],
+    labels = ["iam"],
     per_account_roles = {
         "branches": {
             "main": "OrganizationAccountAccessRole",
