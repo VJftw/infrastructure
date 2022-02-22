@@ -41,9 +41,10 @@ esac
 
 util::info "Running 'terraform ${ARGS_command}' for '${FLAGS_please_target}' on the '${FLAGS_workspace_name}' workspace"
 
-./pleasew run -p "${FLAGS_please_target}" -- "
+./pleasew run -p "${FLAGS_please_target}" -- "$(cat <<-END
 terraform init -lock=true -lock-timeout=30s && \
 (terraform workspace list | sed 's/*/ /' | awk '{print \$1}' | grep -w \"^${FLAGS_workspace_name}$\" || terraform workspace new \"${FLAGS_workspace_name}\") && \
 terraform workspace select \"${FLAGS_workspace_name}\" && \
 ${terraform_cmd}
-"
+END
+)"

@@ -24,7 +24,7 @@ PER_TF_ROOT_OPA_DATA="$(./pleasew query output "$per_tf_root_opa_data_target")"
 
 util::info "Running 'terraform plan' for ${FLAGS_please_target}"
 
-./pleasew run -p "$FLAGS_please_target" -- "
+./pleasew run -p "$FLAGS_please_target" -- "$(cat <<-END
 terraform init -lock=false && \
 terraform plan -refresh=false -compact-warnings -lock=false -out=tfplan.out && \
 terraform show -json tfplan.out > tfplan.json
@@ -34,6 +34,7 @@ terraform show -json tfplan.out > tfplan.json
 $OPA_EVAL \
     --data $PER_TF_ROOT_OPA_DATA \
     --input tfplan.json
-"
+END
+)"
 
 util::success "Terraform plan for ${FLAGS_please_target} is OK!"
