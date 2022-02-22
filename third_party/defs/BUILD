@@ -1,8 +1,8 @@
-TERRAFORM_DEF_VERSION = "1615274add5023f588497f1db43163e6ce5606cf"
+TERRAFORM_DEF_VERSION = "8a606283c7650bf06e25faeaed3cb51600410590"
 
 remote_file(
     name = "terraform",
-    hashes = ["7d3feec79be53e6011f4f3f1622d45f0d95bebcfbf75d57af434c69c69fe1b04"],
+    hashes = ["6407881d79d231e6ae6d66ca70722747baa45b2d01d6531ad2a61da9e23aaf68"],
     url = f"https://raw.githubusercontent.com/thought-machine/pleasings/{TERRAFORM_DEF_VERSION}/terraform/terraform.build_defs",
     visibility = ["PUBLIC"],
 )

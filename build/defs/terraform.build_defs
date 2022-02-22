@@ -73,7 +73,7 @@ unset AWS_SESSION_TOKEN
       account_auth_cmds+=[account_auth_cmd]
       account_auth_trgts+=[account_auth_trgt]
 
-    auth_cmds=" \\\\\n".join(account_auth_cmds)
+    auth_cmds="\n".join(account_auth_cmds)
 
     return _upstream_terraform_root(
       name=name, 
