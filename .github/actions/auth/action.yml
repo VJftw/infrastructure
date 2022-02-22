@@ -24,3 +24,8 @@ runs:
     with:
       role-to-assume: "arn:aws:iam::400744676526:role/${{ inputs.role_name }}"
       aws-region: us-east-1
+
+  - name: Migrate to Shared AWS credentials file
+    if: inputs.providers == 'all' || inputs.providers == 'aws'
+    shell: bash
+    run: ./pleasew -p -v2 run //build/ci/github/actions/auth:aws
