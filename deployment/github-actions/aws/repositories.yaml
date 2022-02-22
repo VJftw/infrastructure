@@ -10,13 +10,17 @@ VJftw/infrastructure:
           - administrator
           - OrganizationAccountAccessRole
 
-# "VJftw/vjpatel.me":
-#   pull_requests:
-#     accounts:
-#       vjp-website:
-#         - reader
-#   branches:
-#     main:
-#       accounts:
-#         vjp-website:
-#           - administrator
+"VJftw/vjpatel.me":
+  pull_requests:
+    accounts:
+      vjp-website:
+        - reader
+      vjp-management:
+        - reader
+  branches:
+    main:
+      accounts:
+        vjp-website:
+          - administrator
+        vjp-management:
+          - administrator

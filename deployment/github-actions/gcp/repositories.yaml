@@ -128,3 +128,14 @@ VJftw/remote-ws:
         vjp-dns:
           - roles/dns.admin
           - roles/iam.securityAdmin
+
+VJftw/vjpatel.me:
+  pull_requests:
+    buckets:
+      vjp-terraform-state: 
+        - roles/storage.objectAdmin
+  branches:
+    main:
+      buckets:
+        vjp-terraform-state: 
+          - roles/storage.objectAdmin
