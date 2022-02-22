@@ -7,6 +7,9 @@ inputs:
   providers:
     default: all
     description: "The providers to authenticate against"
+  aws_translate_tool_target:
+    default: "//build/ci/github/actions/auth:aws"
+    description: "The Please target of the tool to use to translate AWS credentials"
 runs:
   using: "composite"
   steps:
@@ -28,4 +31,4 @@ runs:
   - name: Migrate to Shared AWS credentials file
     if: inputs.providers == 'all' || inputs.providers == 'aws'
     shell: bash
-    run: ./pleasew -p -v2 run //build/ci/github/actions/auth:aws
+    run: ./pleasew -p -v2 run ${{ inputs.aws_translate_tool_target }}
