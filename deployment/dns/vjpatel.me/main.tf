@@ -24,3 +24,10 @@ provider "aws" {
   profile = "vjp-dns"
   region  = "eu-west-1"
 }
+
+provider "aws" {
+  alias = "website"
+
+  profile = "vjp-website"
+  region  = "us-east-1"
+}

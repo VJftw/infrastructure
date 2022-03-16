@@ -22,5 +22,11 @@ terraform_root(
             },
             "pull_request": "reader",
         },
+        "//accounts/aws:vjp-website_auth": {
+            "branches": {
+                "main": "reader",
+            },
+            "pull_request": "reader",
+        },
     },
 )

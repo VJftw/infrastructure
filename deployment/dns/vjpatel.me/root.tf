@@ -29,6 +29,12 @@ resource "aws_route53_record" "gcp" {
   records = google_dns_managed_zone.gcp.name_servers
 }
 
+data "aws_cloudfront_distribution" "vjp_website" {
+  provider = aws.website
+
+  id = "E21HTJAW5IH77A"
+}
+
 resource "aws_route53_record" "vjp_website" {
   // We can't create CNAMEs at the apex of a DNS zone, so we must use aliases.
   provider = aws.management
@@ -40,8 +46,8 @@ resource "aws_route53_record" "vjp_website" {
   zone_id = aws_route53_zone.root.zone_id
 
   alias {
-    name                   = "d1mc7rhc6swrfe.cloudfront.net"
-    zone_id                = "Z2FDTNDATAQYW2"
+    name                   = aws_cloudfront_distribution.vjp_website.domain_name
+    zone_id                = aws_cloudfront_distribution.vjp_website.hosted_zone_id
     evaluate_target_health = true
   }
 }
