@@ -8,6 +8,7 @@ VJftw/infrastructure:
       accounts:
         "*":
           - administrator
+          - reader
           - OrganizationAccountAccessRole
 
 "VJftw/vjpatel.me":
