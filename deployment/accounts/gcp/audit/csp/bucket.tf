@@ -65,11 +65,22 @@ resource "google_kms_crypto_key" "audit_csp" {
 
   name            = "${var.name}-audit-csp"
   key_ring        = google_kms_key_ring.audit_csp.id
-  rotation_period = "86400s"
+  rotation_period = "1209600s" # 2 weeks
 
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "google_kms_crypto_key_iam_binding" "audit_csp" {
+  provider = google-beta.logs
+
+  crypto_key_id = google_kms_crypto_key.audit_csp.id
+  role          = "roles/cloudkms.admin"
+
+  members = [
+    "serviceAccount:${google_service_account.function.email}",
+  ]
 }
 
 data "google_storage_project_service_account" "logs" {
