@@ -3,9 +3,6 @@ subinclude("//build/defs:terraform")
 terraform_per_account(
     srcs = [
         "bucket.tf",
-        "cleanup-kms-key-versions.tf",
-        "cleanup-kms-key-versions/main.py",
-        "cleanup-kms-key-versions/requirements.txt",
         "main.tf",
         "sink.tf",
         "variables.tf",
@@ -18,6 +15,9 @@ terraform_per_account(
             "pull_request": "reader",
         },
     },
+    modules = [
+        "//modules/kms/gcp:gcp",
+    ],
     per_account_roles = {
         "branches": {
             "main": "administrator",

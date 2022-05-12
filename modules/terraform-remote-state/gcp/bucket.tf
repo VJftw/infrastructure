@@ -1,7 +1,7 @@
 resource "google_storage_bucket" "terraform_state" {
-  project = var.project_id
+  provider = google-beta
 
-  name          = var.project_id # we use Projects as security boundaries
+  name          = data.google_project.project.project_id # we use Projects as security boundaries
   location      = "EUROPE-WEST2"
   force_destroy = true
 
@@ -23,46 +23,33 @@ resource "google_storage_bucket" "terraform_state" {
   }
 
   encryption {
-    default_kms_key_name = google_kms_crypto_key.terraform_state.id
+    default_kms_key_name = module.kms.google_kms_crypto_key.id
   }
-
-}
-
-resource "google_project_service" "cloudkms" {
-  project = var.project_id
-  service = "cloudkms.googleapis.com"
-
-  disable_dependent_services = true
-}
-
-
-resource "google_kms_key_ring" "terraform_state" {
-  project = var.project_id
-
-  name     = "terraform-state"
-  location = "europe-west2"
 
   depends_on = [
-    google_project_service.cloudkms,
+    google_kms_crypto_key_iam_binding.binding,
   ]
+
 }
 
-resource "google_kms_crypto_key" "terraform_state" {
-  name            = "terraform-state"
-  key_ring        = google_kms_key_ring.terraform_state.id
-  rotation_period = "86400s"
+module "kms" {
+  source = "//modules/kms/gcp:gcp"
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  name = "${data.google_project.project.project_id}-terraform-state-bucket"
+  location = "europe-west2"
+  providers = {
+    google-beta = google-beta
+  } 
 }
 
 data "google_storage_project_service_account" "gcs_account" {
-  project = var.project_id
+  provider = google-beta
 }
 
 resource "google_kms_crypto_key_iam_binding" "binding" {
-  crypto_key_id = google_kms_crypto_key.terraform_state.id
+  provider = google-beta
+
+  crypto_key_id = module.kms.google_kms_crypto_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = ["serviceAccount:${data.google_storage_project_service_account.gcs_account.email_address}"]

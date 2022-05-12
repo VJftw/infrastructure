@@ -7,8 +7,14 @@ terraform {
   }
 }
 
+provider "google-beta" {
+  project = var.name
+}
+
 module "terraform_remote_state" {
   source = "//modules/terraform-remote-state/gcp:gcp"
 
-  project_id = var.name
+  providers = {
+    google-beta = google-beta
+  }
 }

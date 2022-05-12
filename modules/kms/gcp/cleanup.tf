@@ -3,11 +3,11 @@ locals {
 }
 
 resource "google_project_service" "cloudfunctions" {
-  provider = google-beta.logs
+  provider = google-beta
 
   service = "cloudfunctions.googleapis.com"
 
-  disable_dependent_services = true
+  disable_dependent_services = false
 
   depends_on = [
     google_project_service.cloudbuild,
@@ -15,17 +15,17 @@ resource "google_project_service" "cloudfunctions" {
 }
 
 resource "google_project_service" "cloudbuild" {
-  provider = google-beta.logs
+  provider = google-beta
 
   service = "cloudbuild.googleapis.com"
 
-  disable_dependent_services = true
+  disable_dependent_services = false
 }
 
 resource "google_cloudfunctions_function" "function" {
-  provider = google-beta.logs
+  provider = google-beta
 
-  region = "europe-west1"
+  region = lower(var.location)
 
   name        = local.fn_id
   description = "Cleans up old KMS keys for ${var.name}"
@@ -39,7 +39,7 @@ resource "google_cloudfunctions_function" "function" {
   service_account_email = google_service_account.function.email
 
   environment_variables = {
-    CRYPTO_KEY_ID = google_kms_crypto_key.audit_csp.id
+    CRYPTO_KEY_ID = google_kms_crypto_key.this.id
   }
 
   event_trigger {
@@ -54,24 +54,24 @@ resource "google_cloudfunctions_function" "function" {
 }
 
 resource "google_service_account" "function" {
-  provider = google-beta.logs
+  provider = google-beta
 
   account_id   = local.fn_id
   display_name = "${var.name}-kms-key-cleaner"
 }
 
 resource "google_storage_bucket" "function" {
-  provider = google-beta.logs
+  provider = google-beta
 
   name          = local.fn_id
-  location      = "EUROPE-WEST1"
+  location      = upper(var.location)
   force_destroy = true
 
   uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "function" {
-  provider = google-beta.logs
+  provider = google-beta
 
   name   = "cleanup-kms-key-versions.${data.archive_file.function.output_md5}.zip"
   source = data.archive_file.function.output_path
@@ -95,7 +95,7 @@ data "archive_file" "function" {
 }
 
 resource "google_pubsub_topic" "function_trigger" {
-  provider = google-beta.logs
+  provider = google-beta
 
   name = "${local.fn_id}-trigger"
 
@@ -103,7 +103,7 @@ resource "google_pubsub_topic" "function_trigger" {
 }
 
 resource "google_project_service" "cloudscheduler" {
-  provider = google-beta.logs
+  provider = google-beta
 
   service = "cloudscheduler.googleapis.com"
 
@@ -111,7 +111,7 @@ resource "google_project_service" "cloudscheduler" {
 }
 
 resource "google_cloud_scheduler_job" "function_trigger" {
-  provider = google-beta.logs
+  provider = google-beta
 
   region = "europe-west1"
 
@@ -120,12 +120,22 @@ resource "google_cloud_scheduler_job" "function_trigger" {
   schedule    = "0 0 1,15 * *"
 
   pubsub_target {
-    # topic.id is the topic's full resource name.
     topic_name = google_pubsub_topic.function_trigger.id
     data       = base64encode("{}")
   }
 
   depends_on = [
     google_project_service.cloudscheduler,
+  ]
+}
+
+resource "google_kms_crypto_key_iam_binding" "this" {
+  provider = google-beta
+
+  crypto_key_id = google_kms_crypto_key.this.id
+  role          = "roles/cloudkms.admin"
+
+  members = [
+    "serviceAccount:${google_service_account.function.email}",
   ]
 }
