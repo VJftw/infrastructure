@@ -31,7 +31,7 @@ resource "google_storage_bucket" "audit_csp" {
   }
 
   encryption {
-    default_kms_key_name = google_kms_crypto_key.audit_csp.id
+    default_kms_key_name = module.kms.google_kms_crypto_key.id
   }
 
   depends_on = [
@@ -40,47 +40,14 @@ resource "google_storage_bucket" "audit_csp" {
 
 }
 
-resource "google_project_service" "cloudkms" {
-  provider = google-beta.logs
+module "kms" {
+  source = "//modules/kms/gcp:gcp"
 
-  service = "cloudkms.googleapis.com"
-
-  disable_dependent_services = true
-}
-
-
-resource "google_kms_key_ring" "audit_csp" {
-  provider = google-beta.logs
-
-  name     = "${var.name}-audit-csp"
+  name     = "${var.name}-csp-audit"
   location = "europe-west1"
-
-  depends_on = [
-    google_project_service.cloudkms,
-  ]
-}
-
-resource "google_kms_crypto_key" "audit_csp" {
-  provider = google-beta.logs
-
-  name            = "${var.name}-audit-csp"
-  key_ring        = google_kms_key_ring.audit_csp.id
-  rotation_period = "1209600s" # 2 weeks
-
-  lifecycle {
-    prevent_destroy = true
+  providers = {
+    google-beta = google-beta.logs
   }
-}
-
-resource "google_kms_crypto_key_iam_binding" "audit_csp" {
-  provider = google-beta.logs
-
-  crypto_key_id = google_kms_crypto_key.audit_csp.id
-  role          = "roles/cloudkms.admin"
-
-  members = [
-    "serviceAccount:${google_service_account.function.email}",
-  ]
 }
 
 data "google_storage_project_service_account" "logs" {
@@ -90,7 +57,7 @@ data "google_storage_project_service_account" "logs" {
 resource "google_kms_crypto_key_iam_binding" "binding" {
   provider = google-beta.logs
 
-  crypto_key_id = google_kms_crypto_key.audit_csp.id
+  crypto_key_id = module.kms.google_kms_crypto_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = ["serviceAccount:${data.google_storage_project_service_account.logs.email_address}"]

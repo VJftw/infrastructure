@@ -3,12 +3,13 @@ subinclude("//build/defs:terraform")
 terraform_module(
     name = "gcp",
     srcs = [
-        "bucket.tf",
+        "cleanup.tf",
+        "kms.tf",
+        "main.py",
         "main.tf",
+        "outputs.tf",
+        "requirements.txt",
         "variables.tf",
     ],
     visibility = ["PUBLIC"],
-    deps = [
-        "//modules/kms/gcp",
-    ],
 )
