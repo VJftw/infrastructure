@@ -4,11 +4,11 @@ terraform_module(
     name = "gcp",
     srcs = [
         "bucket.tf",
+        "main.py",
         "main.tf",
-        "variables.tf",
         "re-encrypter.tf",
         "requirements.txt",
-        "main.py",
+        "variables.tf",
     ],
     visibility = ["PUBLIC"],
     deps = [

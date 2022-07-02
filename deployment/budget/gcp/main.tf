@@ -20,7 +20,7 @@ data "google_billing_account" "billing" {
 }
 
 resource "google_billing_budget" "budget" {
-  provider = google-beta
+  provider        = google-beta
   billing_account = data.google_billing_account.billing.id
 
   display_name = "Default"
