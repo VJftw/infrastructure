@@ -6,6 +6,9 @@ terraform_module(
         "bucket.tf",
         "main.tf",
         "variables.tf",
+        "re-encrypter.tf",
+        "requirements.txt",
+        "main.py",
     ],
     visibility = ["PUBLIC"],
     deps = [
