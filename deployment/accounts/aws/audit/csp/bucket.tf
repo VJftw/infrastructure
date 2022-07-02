@@ -7,10 +7,7 @@ resource "aws_s3_bucket" "audit_csp" {
 
   bucket = local.bucket_name
 
-  object_lock_configuration {
-    object_lock_enabled = "Enabled"
-  }
-
+  object_lock_enabled = true
 }
 
 resource "aws_s3_bucket_acl" "audit_csp" {
@@ -42,6 +39,13 @@ resource "aws_kms_key" "bucket" {
   deletion_window_in_days = 10
 
   policy = data.aws_iam_policy_document.bucket_kms.json
+}
+
+resource "aws_kms_alias" "bucket" {
+  provider = aws.target
+
+  name          = "alias/${local.bucket_name}"
+  target_key_id = aws_kms_key.bucket.key_id
 }
 
 data "aws_iam_policy_document" "bucket_kms" {
@@ -117,14 +121,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit_csp" {
 }
 
 // Policy
-resource "aws_s3_bucket_policy" "csp_audit" {
+resource "aws_s3_bucket_policy" "audit_csp" {
   provider = aws.target
 
   bucket = aws_s3_bucket.audit_csp.id
-  policy = data.aws_iam_policy_document.csp_audit.json
+  policy = data.aws_iam_policy_document.audit_csp.json
 }
 
-data "aws_iam_policy_document" "csp_audit" {
+data "aws_iam_policy_document" "audit_csp" {
   provider = aws.target
 
   statement {

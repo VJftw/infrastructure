@@ -15,3 +15,21 @@ terraform_per_account(
     },
     provider = "aws",
 )
+
+# re-import
+"""
+plz query alltargets --include terraform_workspace //deployment/accounts/aws/iam/... \
+    | while read target ; do \
+        echo "$target" \
+        && export name="$(echo "$target" | cut -f2 -d:)" \
+        && plz run "$target" -- "$(cat <<'EOF'
+terraform init
+set +e
+terraform import aws_iam_role.common[\"administrator\"] administrator
+terraform import aws_iam_role.common[\"reader\"] reader
+terraform import aws_iam_role.common[\"viewer\"] viewer
+set -e
+EOF
+)" \
+    ; done
+"""

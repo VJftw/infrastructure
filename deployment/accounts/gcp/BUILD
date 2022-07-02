@@ -35,3 +35,18 @@ terraform_root(
         "//modules/account/gcp:gcp",
     ],
 )
+
+# re-import
+"""
+$ plz run //deployment/accounts/gcp:gcp -- bash
+terraform init
+terraform import "module.account[\"secure-gke\"].google_project.account" "secure-gke"
+terraform import "module.account[\"secure-gke-pr\"].google_project.account" "secure-gke-pr"
+terraform import "module.account[\"vjp-cloud-desktops\"].google_project.account" "vjp-cloud-desktops"
+terraform import "module.account[\"vjp-dns\"].google_project.account" "vjp-dns"
+terraform import "module.account[\"vjp-github-actions\"].google_project.account" "vjp-github-actions"
+terraform import "module.account[\"vjp-logs\"].google_project.account" "vjp-logs"
+terraform import "module.account[\"vjp-remote-ws\"].google_project.account" "vjp-remote-ws"
+terraform import "module.account[\"vjp-sandbox-terraform-state\"].google_project.account" "vjp-sandbox-terraform-state"
+terraform import "module.account[\"vjp-terraform-state\"].google_project.account" "vjp-terraform-state"
+"""

@@ -37,7 +37,7 @@ locals {
   ]
 }
 
-resource "google_organization_policy" "serial_port_policy" {
+resource "google_organization_policy" "policy" {
   for_each = toset(local.organization_boolean_constraints)
 
   org_id     = data.google_organization.org.org_id
