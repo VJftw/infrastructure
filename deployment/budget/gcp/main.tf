@@ -7,6 +7,9 @@ terraform {
   }
 }
 
+provider "google-beta" {
+}
+
 data "google_organization" "org" {
   domain = "vjpatel.me"
 }
@@ -17,6 +20,7 @@ data "google_billing_account" "billing" {
 }
 
 resource "google_billing_budget" "budget" {
+  provider = google-beta
   billing_account = data.google_billing_account.billing.id
 
   display_name = "Default"

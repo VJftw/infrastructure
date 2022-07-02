@@ -11,13 +11,13 @@ resource "aws_cloudtrail" "audit_csp" {
   is_multi_region_trail         = true
   is_organization_trail         = false # we create a trail per account
 
-  kms_key_id = aws_kms_alias.cloudtrail.arn
+  kms_key_id = aws_kms_key.cloudtrail.arn
 
   enable_log_file_validation = true
   enable_logging             = true
 
   depends_on = [
-    aws_s3_bucket_policy.csp_audit,
+    aws_s3_bucket_policy.audit_csp,
   ]
 }
 

@@ -14,3 +14,13 @@ terraform_per_account(
     },
     provider = "aws",
 )
+
+# re-import
+"""
+plz query alltargets --include terraform_workspace //deployment/accounts/aws/alias/... \
+    | while read target ; do \
+        echo "$target" \
+        && export alias="$(echo "$target" | cut -f2 -d:)" \
+        && plz run "$target" -- "terraform init && terraform import aws_iam_account_alias.alias $alias" \
+    ; done
+"""

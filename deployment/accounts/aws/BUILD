@@ -43,3 +43,19 @@ terraform_root(
         "//modules/account/aws:aws",
     ],
 )
+
+# re-import
+"""
+$ plz run //deployment/accounts/aws:aws -- bash
+terraform init
+terraform import "module.account[\"vjp-dns\"].aws_organizations_account.account" "436856999079"
+terraform import "module.account[\"vjp-homomorphic-encryption\"].aws_organizations_account.account" "105193361835"
+terraform import "module.account[\"vjp-logs\"].aws_organizations_account.account" "413999795292"
+terraform import "module.account[\"vjp-management\"].aws_organizations_account.account" "400744676526"
+terraform import "module.account[\"vjp-website\"].aws_organizations_account.account" "447409662917"
+
+terraform state pull > terraform.tfstate
+set -i 's#"iam_user_access_to_billing": null#"iam_user_access_to_billing": "ALLOW"#g' terraform.tfstate
+set -i 's#"role_name": null#"role_name": "OrganizationAccountAccessRole"#g' terraform.tfstate
+terraform state push terraform.tfstate
+"""
