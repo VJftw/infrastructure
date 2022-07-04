@@ -5,6 +5,7 @@ terraform_root(
     srcs = [
         "aws.tf",
         "gcp.tf",
+        "gcp_project_domains.yaml",
         "gsuite.tf",
         "main.tf",
         "root.tf",
@@ -25,6 +26,18 @@ terraform_root(
         "//accounts/aws:vjp-website_auth": {
             "branches": {
                 "main": "reader",
+            },
+            "pull_request": "reader",
+        },
+        "//accounts/gcp:vjp-dns_auth": {
+            "branches": {
+                "main": "administrator",
+            },
+            "pull_request": "reader",
+        },
+        "//accounts/gcp:vjp-remote-ws_auth": {
+            "branches": {
+                "main": "administrator",
             },
             "pull_request": "reader",
         },

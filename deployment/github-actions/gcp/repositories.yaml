@@ -8,7 +8,7 @@ VJftw/infrastructure:
       - roles/resourcemanager.organizationViewer
       - roles/viewer
     buckets:
-      vjp-terraform-state: 
+      vjp-terraform-state:
         - roles/storage.objectViewer
         - roles/storage.legacyBucketWriter
     billing_accounts:
@@ -26,7 +26,7 @@ VJftw/infrastructure:
         - roles/resourcemanager.organizationAdmin
         - roles/resourcemanager.projectCreator
       buckets:
-        vjp-terraform-state: 
+        vjp-terraform-state:
           - roles/storage.objectAdmin
       billing_accounts:
         "My Billing Account":
@@ -50,7 +50,7 @@ VJftw/cloud-bastion:
     billing_accounts:
       "My Billing Account": # TODO: use a separate billing account for Sandbox?
         - roles/billing.user
-    
+
   branches:
     main:
       organization:
@@ -65,9 +65,9 @@ VJftw/cloud-bastion:
           - roles/resourcemanager.projectCreator
           - roles/resourcemanager.projectDeleter
       billing_accounts:
-        "My Billing Account": 
+        "My Billing Account":
           - roles/billing.user
-  
+
 VJftw/cloud-desktops:
   pull_requests:
     organization:
@@ -75,7 +75,7 @@ VJftw/cloud-desktops:
       - roles/resourcemanager.folderViewer
       - roles/resourcemanager.organizationViewer
     buckets:
-      vjp-sandbox-terraform-state: 
+      vjp-sandbox-terraform-state:
         - roles/storage.objectAdmin
     projects:
       vjp-cloud-desktops-pr:
@@ -84,7 +84,7 @@ VJftw/cloud-desktops:
     billing_accounts:
       "My Billing Account": # TODO: use a separate billing account for Sandbox?
         - roles/billing.viewer
-    
+
   branches:
     main:
       organization:
@@ -92,7 +92,7 @@ VJftw/cloud-desktops:
         - roles/resourcemanager.folderViewer
         - roles/resourcemanager.organizationViewer
       buckets:
-        vjp-terraform-state: 
+        vjp-terraform-state:
           - roles/storage.objectAdmin
       projects:
         vjp-cloud-desktops-pr: # for cleanup
@@ -101,41 +101,36 @@ VJftw/cloud-desktops:
           - roles/compute.admin
           - roles/iap.tunnelResourceAccessor
       billing_accounts:
-        "My Billing Account": 
+        "My Billing Account":
           - roles/billing.user
 
 
 VJftw/remote-ws:
   pull_requests:
     buckets:
-      vjp-terraform-state: 
+      vjp-terraform-state:
         - roles/storage.objectAdmin
     projects:
       vjp-remote-ws:
         - roles/compute.viewer
-      vjp-dns:
         - roles/dns.reader
-    
+
   branches:
     main:
       buckets:
-        vjp-terraform-state: 
+        vjp-terraform-state:
           - roles/storage.objectAdmin
       projects:
         vjp-remote-ws:
           - roles/owner
 
-        vjp-dns:
-          - roles/dns.admin
-          - roles/iam.securityAdmin
-
 VJftw/vjpatel.me:
   pull_requests:
     buckets:
-      vjp-terraform-state: 
+      vjp-terraform-state:
         - roles/storage.objectAdmin
   branches:
     main:
       buckets:
-        vjp-terraform-state: 
+        vjp-terraform-state:
           - roles/storage.objectAdmin
