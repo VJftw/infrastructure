@@ -93,12 +93,45 @@ function auth_gcp {
     return
 }
 
+function auth_google-workspace {
+    # authenticate against Google Workspace
+    # On GitHub Actions, ADC should provide the appropriate SA that has 
+    # domain-wide delegation already configured.
+    # For human users, they should perform:
+    scopes=(
+        "openid"
+        "https://www.googleapis.com/auth/userinfo.email"
+        "https://www.googleapis.com/auth/cloud-platform"
+        "https://www.googleapis.com/auth/admin.directory.device.chromeos"
+        "https://www.googleapis.com/auth/admin.directory.device.mobile"
+        "https://www.googleapis.com/auth/admin.directory.group.member"
+        "https://www.googleapis.com/auth/admin.directory.group"
+        "https://www.googleapis.com/auth/admin.directory.orgunit"
+        "https://www.googleapis.com/auth/admin.directory.user"
+        "https://www.googleapis.com/auth/admin.directory.user.alias"
+        "https://www.googleapis.com/auth/admin.directory.user.security"
+        "https://www.googleapis.com/auth/admin.directory.rolemanagement"
+        "https://www.googleapis.com/auth/admin.directory.userschema"
+        "https://www.googleapis.com/auth/admin.directory.customer"
+        "https://www.googleapis.com/auth/admin.directory.domain"
+        "https://www.googleapis.com/auth/admin.directory.resource.calendar"
+    )
+    printf -v scopes_csv '%s,' "${scopes[@]}"
+    gcloud auth application-default login --no-browser --scopes="${scopes_csv,}"
+
+    # Nothing to do as cross-project authorization in GCP doesn't require becoming a new identity.
+    return
+}
+
 case "$account_provider" in
     "aws")
         auth_aws
     ;;
     "gcp")
         auth_gcp
+    ;;
+    "google-workspace")
+        auth_google-workspace
     ;;
     *)
         util::error "unsupported account provider '$account_provider' for '$FLAGS_account_tfvars'"

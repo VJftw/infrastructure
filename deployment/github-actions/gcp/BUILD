@@ -10,6 +10,7 @@ terraform_root(
         "repositories.yaml",
         "services.tf",
         "variables.tf",
+        "outputs.tf",
     ],
     opa_data = {
         "allowlist_deleted_addresses": [
