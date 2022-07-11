@@ -2,9 +2,9 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "3.70.0"
-      configuration_aliases = [ 
-        aws.management, 
+      version = "4.22.0"
+      configuration_aliases = [
+        aws.management,
       ]
     }
   }
@@ -28,6 +28,8 @@ resource "aws_organizations_account" "account" {
   parent_id = length(local.organization_unit_ids) == 1 ? local.organization_unit_ids[0] : data.aws_organizations_organization.org.roots[0].id
 
   role_name = "OrganizationAccountAccessRole"
+
+  close_on_deletion = true
 
   tags = {}
 }

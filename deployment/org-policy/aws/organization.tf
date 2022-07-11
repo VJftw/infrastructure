@@ -4,6 +4,12 @@ resource "aws_organizations_organization" "org" {
   aws_service_access_principals = []
 
   feature_set = "ALL"
+
+  enabled_policy_types = [
+    "SERVICE_CONTROL_POLICY",
+    "TAG_POLICY",
+    "BACKUP_POLICY",
+  ]
 }
 
 // organizational roles
