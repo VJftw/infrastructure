@@ -13,6 +13,7 @@ locals {
   trusted_account_iam_users = {
     "vjp-management" : [
       "vjftw@remote-ws-vjpatel-me",
+      "vjftw@Dumbledore",
     ],
   }
 
