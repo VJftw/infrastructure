@@ -1,16 +1,30 @@
-TERRAFORM_DEF_VERSION = "8a606283c7650bf06e25faeaed3cb51600410590"
+# TERRAFORM_DEF_VERSION="v0.0.1"
+# TERRAFORM_TOOL="//third_party/defs:terraform_tool"
+# TERRAFORM_DEFAULT_TOOLCHAIN="//third_party/terraform:1_1"
 
-remote_file(
-    name = "terraform",
-    hashes = ["6407881d79d231e6ae6d66ca70722747baa45b2d01d6531ad2a61da9e23aaf68"],
-    url = f"https://raw.githubusercontent.com/thought-machine/pleasings/{TERRAFORM_DEF_VERSION}/terraform/terraform.build_defs",
-    visibility = ["PUBLIC"],
-)
+# remote_file(
+#     name = "_terraform#download",
+#     url = f"https://raw.githubusercontent.com/VJftw/please-terraform/{TERRAFORM_DEF_VERSION}/build/defs/terraform.build_defs",
+#     hashes = ["c7b3d51c8190c8d675708642dc3915096f07ce0ac331818642a1d9584ffbdd19"],
+# )
 
-remote_file(
-    name = "terraform_tool",
-    binary = True,
-    hashes = ["66be678e64bab50773d52323d6c6e6bec764fc9ea9a12afe1d7640c6f1d2c62d"],
-    url = f"https://raw.githubusercontent.com/thought-machine/pleasings/{TERRAFORM_DEF_VERSION}/terraform/scripts/terraform.sh",
-    visibility = ["PUBLIC"],
-)
+# remote_file(
+#     name = "terraform_tool",
+#     url = f"https://github.com/VJftw/please-terraform/releases/download/{TERRAFORM_DEF_VERSION}/please_terraform",
+#     visibility = ["PUBLIC"],
+#     binary = True,
+# )
+
+# genrule(
+#     name = "terraform",
+#     srcs = [":_terraform#download"],
+#     outs = ["terraform_custom.build_defs"],
+#     cmd = [
+#         "mv $SRCS $OUTS",
+#         # Replace CONFIG.TERRAFORM.TOOL with your tool.
+#         f"sed -i 's#CONFIG.TERRAFORM.TOOL#\"{TERRAFORM_TOOL}\"#g' $OUTS",
+#         # Replace CONFIG.TERRAFORM.DEFAULT_TOOLCHAIN with your tool.
+#         f"sed -i 's#CONFIG.TERRAFORM.DEFAULT_TOOLCHAIN#\"{TERRAFORM_DEFAULT_TOOLCHAIN}\"#g' $OUTS",
+#     ],
+#     visibility = ["PUBLIC"],
+# )
