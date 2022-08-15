@@ -1,4 +1,4 @@
-subinclude("//third_party/defs:terraform")
+subinclude("///terraform//build/defs:terraform")
 _upstream_terraform_root = terraform_root
 
 def terraform_root(
@@ -6,7 +6,6 @@ def terraform_root(
     srcs: list,
     var_files: list = [],
     modules: list = [],
-    providers: list = [],
     toolchain: str = None,
     labels: list = [],
     visibility: list = [],
@@ -53,14 +52,14 @@ $(out_location {account_auth_trgt})"""
       if "pull_request" in role_config:
         pull_request_flag_value=role_config["pull_request"]
         account_auth_cmd+=f" \\\\\n--pull_request_role=\"{pull_request_flag_value}\""
-      
+
       # skip terraform if we cannot authenticate and we suspect it's not been created yet (exit code 2).
       account_auth_cmd+="""
 exitVal=\\\$?
-if [ \\\$exitVal -eq 2 ]; then 
-  exit 0 
-elif [ \\\$exitVal -ne 0 ]; then 
-  exit \\\$exitVal 
+if [ \\\$exitVal -eq 2 ]; then
+  exit 0
+elif [ \\\$exitVal -ne 0 ]; then
+  exit \\\$exitVal
 fi
 set -e
 
@@ -76,13 +75,12 @@ unset AWS_SESSION_TOKEN
     auth_cmds="\n".join(account_auth_cmds)
 
     return _upstream_terraform_root(
-      name=name, 
-      srcs=srcs, 
-      var_files=var_files, 
-      modules=modules, 
-      providers=providers, 
-      toolchain=toolchain, 
-      labels=labels, 
+      name=name,
+      srcs=srcs,
+      var_files=var_files,
+      modules=modules,
+      toolchain=toolchain,
+      labels=labels,
       add_default_workflows=True,
       additional_workspace_data=["//common/terraform:state_generator"] + account_auth_trgts,
       pre_workspace_cmd=f"""

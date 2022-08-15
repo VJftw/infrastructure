@@ -1,7 +1,7 @@
-subinclude("//third_party/defs:terraform")
+subinclude("///terraform//build/defs:terraform")
 
 terraform_toolchain(
-    name = "1_1",
+    name = "1.1",
     version = "1.1.2",
     visibility = ["PUBLIC"],
 )
