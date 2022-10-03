@@ -23,5 +23,5 @@ resource "google_kms_crypto_key" "this" {
 
   name            = var.name
   key_ring        = google_kms_key_ring.this.id
-  rotation_period = "1209600s" # 2 weeks
+  # rotation_period = "1209600s" # 2 weeks
 }

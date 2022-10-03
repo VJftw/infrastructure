@@ -17,7 +17,7 @@ terraform_per_account(
 
 # re-import
 """
-plz query alltargets --include terraform_workspace //deployment/accounts/aws/alias/... \
+plz query alltargets --include terraform_root //deployment/accounts/aws/alias/... \
     | while read target ; do \
         echo "$target" \
         && export alias="$(echo "$target" | cut -f2 -d:)" \
