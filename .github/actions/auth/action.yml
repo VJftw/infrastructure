@@ -3,7 +3,7 @@ description: "Authenticates to all providers"
 inputs:
   role_name:
     required: true
-    description: "The role/service-account name to use" 
+    description: "The role/service-account name to use"
   providers:
     default: all
     description: "The providers to authenticate against"
@@ -23,7 +23,7 @@ runs:
 
   - name: Authenticate to Amazon Web Services
     if: inputs.providers == 'all' || inputs.providers == 'aws'
-    uses: aws-actions/configure-aws-credentials@v1
+    uses: aws-actions/configure-aws-credentials@v1-node16
     with:
       role-to-assume: "arn:aws:iam::400744676526:role/${{ inputs.role_name }}"
       aws-region: us-east-1

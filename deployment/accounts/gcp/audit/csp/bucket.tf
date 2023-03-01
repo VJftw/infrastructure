@@ -5,6 +5,7 @@ resource "google_storage_bucket" "audit_csp" {
   location = "EUROPE-WEST1"
 
   uniform_bucket_level_access = true
+  force_destroy = true
 
   lifecycle_rule {
     condition {

@@ -9,10 +9,10 @@ jobs:
   generate_jobs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 100
-    
+
     - name: Determine changes
       uses: ./.github/actions/generate/jobs
 
@@ -37,7 +37,7 @@ jobs:
     concurrency: "${{ matrix.terraform-job }}"
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Authenticate
       uses: ./.github/actions/auth

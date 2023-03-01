@@ -31,12 +31,12 @@ VJftw/infrastructure:
     accounts:
       vjp-website:
         - reader
-      vjp-management:
+      vjp-dns:
         - reader
   branches:
     main:
       accounts:
         vjp-website:
           - administrator
-        vjp-management:
+        vjp-dns:
           - administrator
