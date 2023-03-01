@@ -9,10 +9,10 @@ jobs:
   generate_jobs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 100
-    
+
     - name: Determine changes
       uses: ./.github/actions/generate/jobs
 
@@ -42,7 +42,7 @@ jobs:
   terraform_apply_accounts:
     if: ${{ needs.generate_jobs.outputs.accounts-terraform-jobs != '[]' }}
     name: "Apply accounts"
-    needs: 
+    needs:
     - generate_jobs
     runs-on: ubuntu-latest
     permissions:
@@ -55,7 +55,7 @@ jobs:
     concurrency: "${{ matrix.terraform-job }}"
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Authenticate
       uses: ./.github/actions/auth
@@ -69,7 +69,7 @@ jobs:
   terraform_apply_iam:
     if: ${{ needs.generate_jobs.outputs.iam-terraform-jobs != '[]' }}
     name: "Apply IAM"
-    needs: 
+    needs:
     - generate_jobs
     - terraform_apply_accounts
     runs-on: ubuntu-latest
@@ -83,7 +83,7 @@ jobs:
     concurrency: "${{ matrix.terraform-job }}"
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Authenticate
       uses: ./.github/actions/auth
@@ -93,12 +93,12 @@ jobs:
     - name: "${{ matrix.terraform-job }}"
       run: |-
         ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
-    
+
 
   terraform_apply_remaining:
     if: ${{ needs.generate_jobs.outputs.remaining-terraform-jobs != '[]' }}
     name: "Apply remaining"
-    needs: 
+    needs:
     - generate_jobs
     - terraform_apply_iam
     runs-on: ubuntu-latest
@@ -112,7 +112,7 @@ jobs:
     concurrency: "${{ matrix.terraform-job }}"
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Authenticate
       uses: ./.github/actions/auth
