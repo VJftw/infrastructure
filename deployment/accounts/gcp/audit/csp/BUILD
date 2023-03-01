@@ -18,6 +18,21 @@ terraform_per_account(
     modules = [
         "//modules/kms/gcp:gcp",
     ],
+    opa_data = {
+        "allowlist_deleted_addresses": [
+            "module.account[\"secure-gke\"].google_project.account",
+            "module.account[\"secure-gke-pr\"].google_project.account",
+            "module.kms.google_cloud_scheduler_job.function_trigger",
+            "module.kms.google_cloudfunctions_function.function",
+            "module.kms.google_kms_crypto_key_iam_binding.this",
+            "module.kms.google_project_service.cloudbuild",
+            "module.kms.google_project_service.cloudfunctions",
+            "module.kms.google_project_service.cloudscheduler",
+            "module.kms.google_pubsub_topic.function_trigger",
+            "module.kms.google_service_account.function",
+            "module.kms.google_storage_bucket.function",
+        ],
+    },
     per_account_roles = {
         "branches": {
             "main": "administrator",
