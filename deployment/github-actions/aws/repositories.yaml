@@ -25,3 +25,18 @@ VJftw/infrastructure:
           - administrator
         vjp-management:
           - administrator
+
+"VJftw/vjwedsravs.uk":
+  pull_requests:
+    accounts:
+      vjp-website:
+        - reader
+      vjp-management:
+        - reader
+  branches:
+    main:
+      accounts:
+        vjp-website:
+          - administrator
+        vjp-management:
+          - administrator
