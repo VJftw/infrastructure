@@ -21,7 +21,7 @@ args=(
     "--plain_output"
 )
 
-include="terraform_workspace"
+include="terraform_root"
 if [ -n "${FLAGS_includes}" ]; then
     include="${include},${FLAGS_includes}"
 fi

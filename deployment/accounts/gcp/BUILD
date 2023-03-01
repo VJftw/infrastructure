@@ -34,14 +34,18 @@ terraform_root(
     modules = [
         "//modules/account/gcp:gcp",
     ],
+    opa_data = {
+        "allowlist_deleted_addresses": [
+            "module.account[\"secure-gke\"].google_project.account",
+            "module.account[\"secure-gke-pr\"].google_project.account",
+        ],
+    },
 )
 
 # re-import
 """
 $ plz run //deployment/accounts/gcp:gcp -- bash
 terraform init
-terraform import "module.account[\"secure-gke\"].google_project.account" "secure-gke"
-terraform import "module.account[\"secure-gke-pr\"].google_project.account" "secure-gke-pr"
 terraform import "module.account[\"vjp-cloud-desktops\"].google_project.account" "vjp-cloud-desktops"
 terraform import "module.account[\"vjp-dns\"].google_project.account" "vjp-dns"
 terraform import "module.account[\"vjp-github-actions\"].google_project.account" "vjp-github-actions"
