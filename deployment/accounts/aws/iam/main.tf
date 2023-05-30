@@ -14,6 +14,7 @@ locals {
     "vjp-management" : [
       "vjftw@remote-ws-vjpatel-me",
       "vjftw@Dumbledore",
+      "vjftw@durmstrang.vjpatel.me",
     ],
   }
 
