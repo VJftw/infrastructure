@@ -134,3 +134,15 @@ VJftw/vjpatel.me:
       buckets:
         vjp-terraform-state:
           - roles/storage.objectAdmin
+          
+VJftw/vjwedsravs.uk:
+  pull_requests:
+    buckets:
+      vjp-terraform-state:
+        - roles/storage.objectAdmin
+  branches:
+    main:
+      buckets:
+        vjp-terraform-state:
+          - roles/storage.objectAdmin
+
