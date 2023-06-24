@@ -1,11 +1,11 @@
+subinclude("///shell//build_defs:shell")
 
 def rego_bundle(
-    name: str,
-    root: str,
-    srcs: list,
-    visibility: list = [],
-    deps: list = [],
-):
+        name:str,
+        root:str,
+        srcs:list,
+        visibility:list=[],
+        deps:list=[]):
     return genrule(
         name = name,
         outs = [name],
@@ -31,13 +31,11 @@ EOF
         exported_deps = deps,
     )
 
-
 def rego_test(
-    name: str,
-    srcs: list,
-    deps: list = [],
-):
-    bundles=" \\\n".join([f"--bundle ./$(location {b})" for b in deps])
+        name:str,
+        srcs:list,
+        deps:list=[]):
+    bundles = " \\\n".join([f"--bundle ./$(location {b})" for b in deps])
     return gentest(
         name = name,
         data = srcs + deps,
@@ -71,12 +69,11 @@ cat opa.results
     )
 
 def opa_eval(
-    name: str,
-    bundles: list,
-    query: str = "",
-    visibility: list = [],
-):
-    bundle_flags=" \\\\\n".join([f"--bundle $(out_location {b})" for b in bundles])
+        name:str,
+        bundles:list,
+        query:str="",
+        visibility:list=[]):
+    bundle_flags = " \\\\\n".join([f"--bundle $(out_location {b})" for b in bundles])
 
     return sh_cmd(
         name = name,

@@ -6,15 +6,18 @@
 ; Or you can uncomment the following to pin everyone to a particular version;
 ; when you change it all users will automatically get updated.
 [please]
-version = 16.22.1
+version = 17.1.0
 
 ; Support the non *-rules repo name format of Please plugins.
 PluginRepo = "https://github.com/{owner}/{plugin}/archive/{revision}.zip"
 
 [Plugin "terraform"]
 Target = //third_party/plugins:terraform
-ToolVersion = "v0.0.9"
+ToolVersion = "v0.0.10"
 DefaultToolchain = //third_party/terraform:1.1
+
+[Plugin "shell"]
+Target = //third_party/plugins:shell
 
 [alias "lint"]
 cmd = run //build/util:_lint_all
