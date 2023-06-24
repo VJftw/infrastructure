@@ -1,6 +1,6 @@
 name: "Generate Terraform matrix"
 description: "Generates a Terraform job matrix"
-inputs: 
+inputs:
   includes:
     required: false
     description: The Please labels to include from results.
@@ -16,17 +16,16 @@ outputs:
 runs:
   using: "composite"
   steps:
-  - name: Generate Terraform Jobs
-    shell: bash
-    run: |-
-      ./pleasew -p -v2 run //build/ci/github/jobs:terraform -- \
-        --excludes="${{ inputs.excludes }}" \
-        --includes="${{ inputs.includes }}" \
-        --changes_file="plz-out/changes" \
-        --out_file="plz-out/github/terraform_jobs.json"
+    - name: Generate Terraform Jobs
+      shell: bash
+      run: |-
+        ./pleasew -p -v2 run //build/ci/github/jobs:terraform -- \
+          --excludes="${{ inputs.excludes }}" \
+          --includes="${{ inputs.includes }}" \
+          --changes_file="plz-out/changes" \
+          --out_file="plz-out/github/terraform_jobs.json"
 
-  - id: terraform-jobs
-    name: Set Terraform jobs output
-    shell: bash
-    run: echo "::set-output name=terraform-jobs::$(<plz-out/github/terraform_jobs.json)"
-  
+    - id: terraform-jobs
+      name: Set Terraform jobs output
+      shell: bash
+      run: cat plz-out/github/terraform_jobs.json >> "GITHUB_OUTPUT"
