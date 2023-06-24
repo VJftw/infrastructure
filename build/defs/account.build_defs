@@ -1,11 +1,12 @@
+subinclude("///shell//build_defs:shell")
+
 def account(
-    tfvars_file: str,
-    default_role: str = "administrator",
-):
+        tfvars_file:str,
+        default_role:str="administrator"):
     name = basename(tfvars_file).split(".")[0]
 
     # _tfvars
-    tfvars=export_file(
+    tfvars = export_file(
         name = f"{name}_tfvars",
         src = tfvars_file,
         visibility = ["PUBLIC"],
@@ -27,9 +28,8 @@ $(out_location //build/defs/account:auth_tool) \\\\
     )
 
 def provider(
-    name: str,
-):
-    fg=filegroup(
+        name:str):
+    fg = filegroup(
         name = name,
         srcs = glob(["**.tfvars"]),
         visibility = ["PUBLIC"],
