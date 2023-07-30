@@ -12,7 +12,7 @@ inputs:
 outputs:
   terraform-jobs:
     description: "The matrix of Terraform jobs discovered"
-    value: ${{ steps.terraform-jobs.outputs.terraform-jobs }}
+    value: ${{ steps.terraform-jobs.outputs.jobs }}
 runs:
   using: "composite"
   steps:
@@ -28,4 +28,5 @@ runs:
     - id: terraform-jobs
       name: Set Terraform jobs output
       shell: bash
-      run: cat plz-out/github/terraform_jobs.json >> "GITHUB_OUTPUT"
+      run: |-
+        echo "jobs=$(cat plz-out/github/terraform_jobs.json)" >> "$GITHUB_OUTPUT"
