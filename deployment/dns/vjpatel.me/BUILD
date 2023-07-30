@@ -7,6 +7,7 @@ terraform_root(
         "gcp.tf",
         "gcp_project_domains.yaml",
         "gsuite.tf",
+        "legacy_homomorphic-encryption.tf",
         "main.tf",
         "root.tf",
     ],
