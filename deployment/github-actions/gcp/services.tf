@@ -1,6 +1,6 @@
 locals {
-  /* 
-  Service APIs which GitHub Actions can use. 
+  /*
+  Service APIs which GitHub Actions can use.
   These are enabled in the github-actions Project as that is where the impersonated Service Account lives.
   */
   services = [
@@ -24,5 +24,7 @@ resource "google_project_service" "github_actions" {
   project = var.name
   service = each.key
 
-  disable_dependent_services = true
+  disable_dependent_services = false
+
+  disable_on_destroy = false
 }
