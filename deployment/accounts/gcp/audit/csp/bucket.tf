@@ -31,35 +31,36 @@ resource "google_storage_bucket" "audit_csp" {
     retention_period = 86400 * 3 # 3 days in seconds
   }
 
-  encryption {
-    default_kms_key_name = module.kms.google_kms_crypto_key.id
-  }
+  # remove kms encryption because the keys are a little too expensive for me.
+  # encryption {
+  #   default_kms_key_name = module.kms.google_kms_crypto_key.id
+  # }
 
-  depends_on = [
-    google_kms_crypto_key_iam_binding.binding,
-  ]
+  # depends_on = [
+  #   google_kms_crypto_key_iam_binding.binding,
+  # ]
 
 }
 
-module "kms" {
-  source = "//modules/kms/gcp:gcp"
+# module "kms" {
+#   source = "//modules/kms/gcp:gcp"
 
-  name     = "${var.name}-csp-audit"
-  location = "europe-west1"
-  providers = {
-    google-beta = google-beta.logs
-  }
-}
+#   name     = "${var.name}-csp-audit"
+#   location = "europe-west1"
+#   providers = {
+#     google-beta = google-beta.logs
+#   }
+# }
 
-data "google_storage_project_service_account" "logs" {
-  provider = google-beta.logs
-}
+# data "google_storage_project_service_account" "logs" {
+#   provider = google-beta.logs
+# }
 
-resource "google_kms_crypto_key_iam_binding" "binding" {
-  provider = google-beta.logs
+# resource "google_kms_crypto_key_iam_binding" "binding" {
+#   provider = google-beta.logs
 
-  crypto_key_id = module.kms.google_kms_crypto_key.id
-  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+#   crypto_key_id = module.kms.google_kms_crypto_key.id
+#   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  members = ["serviceAccount:${data.google_storage_project_service_account.logs.email_address}"]
-}
+#   members = ["serviceAccount:${data.google_storage_project_service_account.logs.email_address}"]
+# }

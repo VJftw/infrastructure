@@ -31,6 +31,10 @@ terraform_per_account(
             "module.kms.google_pubsub_topic.function_trigger",
             "module.kms.google_service_account.function",
             "module.kms.google_storage_bucket.function",
+            "google_kms_crypto_key_iam_binding.binding",
+            "module.kms.google_kms_crypto_key.this",
+            "module.kms.google_kms_key_ring.this",
+            "module.kms.google_project_service.cloudkms",
         ],
     },
     per_account_roles = {
