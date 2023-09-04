@@ -31,22 +31,22 @@ resource "aws_s3_bucket_object_lock_configuration" "audit_csp" {
   }
 }
 
-// SSE
-resource "aws_kms_key" "bucket" {
-  provider = aws.target
+// SSE - Remove CMK to save cost
+# resource "aws_kms_key" "bucket" {
+#   provider = aws.target
 
-  description             = "This key is used to encrypt bucket objects"
-  deletion_window_in_days = 10
+#   description             = "This key is used to encrypt bucket objects"
+#   deletion_window_in_days = 10
 
-  policy = data.aws_iam_policy_document.bucket_kms.json
-}
+#   policy = data.aws_iam_policy_document.bucket_kms.json
+# }
 
-resource "aws_kms_alias" "bucket" {
-  provider = aws.target
+# resource "aws_kms_alias" "bucket" {
+#   provider = aws.target
 
-  name          = "alias/${local.bucket_name}"
-  target_key_id = aws_kms_key.bucket.key_id
-}
+#   name          = "alias/${local.bucket_name}"
+#   target_key_id = aws_kms_key.bucket.key_id
+# }
 
 data "aws_iam_policy_document" "bucket_kms" {
   statement {
@@ -97,7 +97,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "audit_csp" {
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.bucket.arn
+      # Don't use CMK key to save cost, use the default AWS 
+      # S3 master key instead.
+      # kms_master_key_id = aws_kms_key.bucket.arn
+      kms_master_key_id = "aws/s3"
       sse_algorithm     = "aws:kms"
     }
   }
