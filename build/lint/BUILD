@@ -15,7 +15,7 @@ sh_script(
     visibility = ["PUBLIC"],
     deps = [
         "//build/util",
-        "//third_party/terraform:1.1",
+        "//third_party/terraform:1.5",
     ],
 )
 
