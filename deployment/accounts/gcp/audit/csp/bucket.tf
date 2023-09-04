@@ -7,19 +7,19 @@ resource "google_storage_bucket" "audit_csp" {
   uniform_bucket_level_access = true
   force_destroy = true
 
-  lifecycle_rule {
-    condition {
-      age = 3
-    }
-    action {
-      type          = "SetStorageClass"
-      storage_class = "ARCHIVE"
-    }
-  }
+  # lifecycle_rule {
+  #   condition {
+  #     age = 3
+  #   }
+  #   action {
+  #     type          = "SetStorageClass"
+  #     storage_class = "ARCHIVE"
+  #   }
+  # }
 
   lifecycle_rule {
     condition {
-      age = 14
+      age = 5
     }
     action {
       type = "Delete"

@@ -11,7 +11,9 @@ resource "aws_cloudtrail" "audit_csp" {
   is_multi_region_trail         = true
   is_organization_trail         = false # we create a trail per account
 
-  kms_key_id = aws_kms_key.cloudtrail.arn
+  # kms_key_id = aws_kms_key.cloudtrail.arn
+  # Don't use CMK key to save cost, use the default SSE key instead.
+  # kms_master_key_id = aws_kms_key.bucket.arn
 
   enable_log_file_validation = true
   enable_logging             = true
@@ -21,22 +23,23 @@ resource "aws_cloudtrail" "audit_csp" {
   ]
 }
 
-resource "aws_kms_key" "cloudtrail" {
-  provider = aws
+// SSE - Remove CMK to save cost
+# resource "aws_kms_key" "cloudtrail" {
+#   provider = aws
 
-  description             = "audit-csp in AWS CloudTrail"
-  deletion_window_in_days = 10
-  enable_key_rotation     = true
+#   description             = "audit-csp in AWS CloudTrail"
+#   deletion_window_in_days = 10
+#   enable_key_rotation     = true
 
-  policy = data.aws_iam_policy_document.cloudtrail_kms.json
-}
+#   policy = data.aws_iam_policy_document.cloudtrail_kms.json
+# }
 
-resource "aws_kms_alias" "cloudtrail" {
-  provider = aws
+# resource "aws_kms_alias" "cloudtrail" {
+#   provider = aws
 
-  name          = "alias/cloudtrail-audit-csp"
-  target_key_id = aws_kms_key.cloudtrail.key_id
-}
+#   name          = "alias/cloudtrail-audit-csp"
+#   target_key_id = aws_kms_key.cloudtrail.key_id
+# }
 
 data "aws_iam_policy_document" "cloudtrail_kms" {
   statement {

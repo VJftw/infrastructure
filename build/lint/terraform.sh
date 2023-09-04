@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 source "//build/util"
 
-TERRAFORM="//third_party/terraform:1.1"
+TERRAFORM="//third_party/terraform:1.5"
 
 util::infor "checking Terraform files"
 mapfile -t tf_dirs < <(./pleasew query alltargets \
