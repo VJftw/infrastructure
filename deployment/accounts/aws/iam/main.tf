@@ -12,7 +12,7 @@ locals {
 
   trusted_account_iam_users = {
     "vjp-management" : [
-      "vjftw@durmstrang.vjpatel.me",
+      "vjftw@hogwarts",
     ],
   }
 
