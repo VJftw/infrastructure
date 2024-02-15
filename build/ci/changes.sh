@@ -46,3 +46,5 @@ git checkout "${current_ref}" &> /dev/null
 mkdir -p "$(dirname "${FLAGS_out_file}")"
 printf "%s\n" "${changed_targets[@]}" > "${FLAGS_out_file}"
 util::success "Wrote ${#changed_targets[@]} changed Please targets to ${FLAGS_out_file}"
+
+cat "${FLAGS_out_file}"

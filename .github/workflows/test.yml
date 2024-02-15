@@ -9,6 +9,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Test All
-      run: "./pleasew test --detailed"
+      - uses: actions/checkout@v4
+      - name: Test All
+        run: "./pleasew test --detailed"

@@ -2,64 +2,62 @@ subinclude("///terraform//build/defs:terraform")
 _upstream_terraform_root = terraform_root
 
 def terraform_root(
-    name: str,
-    srcs: list,
-    var_files: list = [],
-    modules: list = [],
-    toolchain: str = None,
-    labels: list = [],
-    visibility: list = [],
-    add_default_workflows: bool = True,
-    use_remote_state: bool = True,
-    remote_state_bucket: str = "vjp-terraform-state",
-    pull_request_state_bucket: str = "",
-    opa_data: dict = {},
-    account_auths: dict = {},
-):
-    opa_data_cmd="set -e; echo '{\"terraform\": {}}' > $OUT"
-    for key, values in opa_data.items():
-      opa_data_cmd+=f"""
-      $(location //third_party/binary:jq) '.terraform |= . + {{ "{key}" : [] }}' $OUT > ${{OUT}}.new
-      mv ${{OUT}}.new $OUT
-      """
-      for value in values:
-        opa_data_cmd+=f"""
-        $(location //third_party/binary:jq) --arg v '{value}' '.terraform["{key}"] |= . + [$v]' $OUT > ${{OUT}}.new
-        mv ${{OUT}}.new $OUT
-        """
-    opa_data=genrule(
-      name = f"_{name}#opa_data",
-      srcs = ["//policy/terraform:base_data"],
-      outs = [f"_{name}#opa_data.json"],
-      cmd = opa_data_cmd + """
+        name:str,
+        srcs:list,
+        var_files:list=[],
+        modules:list=[],
+        toolchain:str=None,
+        labels:list=[],
+        visibility:list=[],
+        add_default_workflows:bool=True,
+        use_remote_state:bool=True,
+        remote_state_bucket:str="vjp-terraform-state",
+        pull_request_state_bucket:str="",
+        opa_data:dict={},
+        account_auths:dict={}):
+    terraform_opa_data = json({
+        "terraform": opa_data,
+    })
+
+    opa_data_cmd = f"""
+cat <<EOF > $OUT
+{terraform_opa_data}
+EOF
+    """
+
+    opa_data = genrule(
+        name = f"_{name}#opa_data",
+        srcs = ["//policy/terraform:base_data"],
+        outs = [f"_{name}#opa_data.json"],
+        cmd = opa_data_cmd + """
       # merge with base opa data
       $(location //third_party/binary:jq) -s '.[0] * .[1]' $(location //policy/terraform:base_data) $OUT > ${OUT}.new
       mv ${OUT}.new $OUT
       """,
-      tools = ["//third_party/binary:jq"],
+        tools = ["//third_party/binary:jq"],
     )
 
-    account_auth_cmds=[]
-    account_auth_trgts=[]
+    account_auth_cmds = []
+    account_auth_trgts = []
     for account_auth_trgt, role_config in account_auths.items():
-      account_auth_cmd=f"""
+        account_auth_cmd = f"""
 set +e
 $(out_location {account_auth_trgt})"""
-      if "branches" in role_config:
-        branch_roles=role_config["branches"].items()
-        branch_roles_flag_value=",".join([f"{b}:{r}" for b, r in branch_roles])
-        account_auth_cmd+=f" \\\\\n--branch_roles=\"{branch_roles_flag_value}\""
-      if "pull_request" in role_config:
-        pull_request_flag_value=role_config["pull_request"]
-        account_auth_cmd+=f" \\\\\n--pull_request_role=\"{pull_request_flag_value}\""
+        if "branches" in role_config:
+            branch_roles = role_config["branches"].items()
+            branch_roles_flag_value = ",".join([f"{b}:{r}" for b, r in branch_roles])
+            account_auth_cmd += f" \\\\\n--branch_roles=\"{branch_roles_flag_value}\""
+        if "pull_request" in role_config:
+            pull_request_flag_value = role_config["pull_request"]
+            account_auth_cmd += f" \\\\\n--pull_request_role=\"{pull_request_flag_value}\""
 
-      # skip terraform if we cannot authenticate and we suspect it's not been created yet (exit code 2).
-      account_auth_cmd+="""
-exitVal=\\\$?
-if [ \\\$exitVal -eq 2 ]; then
+        # skip terraform if we cannot authenticate and we suspect it's not been created yet (exit code 2).
+        account_auth_cmd += """
+exitVal=\\\\$?
+if [ \\\\$exitVal -eq 2 ]; then
   exit 0
-elif [ \\\$exitVal -ne 0 ]; then
-  exit \\\$exitVal
+elif [ \\\\$exitVal -ne 0 ]; then
+  exit \\\\$exitVal
 fi
 set -e
 
@@ -69,21 +67,21 @@ unset AWS_SECRET_ACCESS_KEY
 unset AWS_SESSION_TOKEN
     """
 
-      account_auth_cmds+=[account_auth_cmd]
-      account_auth_trgts+=[account_auth_trgt]
+        account_auth_cmds += [account_auth_cmd]
+        account_auth_trgts += [account_auth_trgt]
 
-    auth_cmds="\n".join(account_auth_cmds)
+    auth_cmds = "\n".join(account_auth_cmds)
 
     return _upstream_terraform_root(
-      name=name,
-      srcs=srcs,
-      var_files=var_files,
-      modules=modules,
-      toolchain=toolchain,
-      labels=labels,
-      add_default_workflows=True,
-      additional_workspace_data=["//common/terraform:state_generator"] + account_auth_trgts,
-      pre_workspace_cmd=f"""
+        name = name,
+        srcs = srcs,
+        var_files = var_files,
+        modules = modules,
+        toolchain = toolchain,
+        labels = labels,
+        add_default_workflows = True,
+        additional_workspace_data = ["//common/terraform:state_generator"] + account_auth_trgts + [opa_data],
+        pre_workspace_cmd = f"""
 {auth_cmds}
 $(out_location //common/terraform:state_generator) \\
     --out_file="remote-state.tf" \\
@@ -95,28 +93,27 @@ $(out_location //common/terraform:state_generator) \\
     )
 
 def terraform_per_account(
-  srcs: list,
-  provider: str,
-  modules: list = [],
-  opa_data: dict = {},
-  per_account_roles: dict = {},
-  account_auths: dict = {},
-  labels: list = [],
-):
-  subinclude(f"//accounts/{provider}:starlark")
+        srcs:list,
+        provider:str,
+        modules:list=[],
+        opa_data:dict={},
+        per_account_roles:dict={},
+        account_auths:dict={},
+        labels:list=[]):
+    subinclude(f"//accounts/{provider}:starlark")
 
-  for account in accounts:
-    name = account["name"]
-    terraform_root(
-      name = name,
-      srcs = srcs,
-      modules = modules,
-      var_files = [
-        f"//accounts/{provider}:{name}_tfvars",
-      ],
-      opa_data = opa_data,
-      account_auths = {
-        f"//accounts/{provider}:{name}_auth": per_account_roles,
-      } | account_auths,
-      labels = labels,
-    )
+    for account in accounts:
+        name = account["name"]
+        terraform_root(
+            name = name,
+            srcs = srcs,
+            modules = modules,
+            var_files = [
+                f"//accounts/{provider}:{name}_tfvars",
+            ],
+            opa_data = opa_data,
+            account_auths = {
+                f"//accounts/{provider}:{name}_auth": per_account_roles,
+            } | account_auths,
+            labels = labels,
+        )

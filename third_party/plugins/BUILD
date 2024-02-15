@@ -6,6 +6,13 @@ plugin_repo(
 )
 
 plugin_repo(
+    name = "opa",
+    owner = "VJftw",
+    plugin = "please-opa",
+    revision = "v0.0.1",
+)
+
+plugin_repo(
     name = "shell",
     owner = "please-build",
     plugin = "shell-rules",

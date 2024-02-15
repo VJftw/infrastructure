@@ -1,6 +1,4 @@
-subinclude("//build/defs:sh")
-
-subinclude("///shell//build_defs:shell")
+subinclude("//build/defs:sh", "///shell//build_defs:shell")
 
 sh_script(
     name = "util",
