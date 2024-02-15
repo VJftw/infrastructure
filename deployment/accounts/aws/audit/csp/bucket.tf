@@ -26,7 +26,7 @@ resource "aws_s3_bucket_object_lock_configuration" "audit_csp" {
   rule {
     default_retention {
       mode = "GOVERNANCE"
-      days = 5
+      days = 3
     }
   }
 }
@@ -97,7 +97,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "audit_csp" {
 
   rule {
     apply_server_side_encryption_by_default {
-      # Don't use CMK key to save cost, use the default AWS 
+      # Don't use CMK key to save cost, use the default AWS
       # S3 master key instead.
       # kms_master_key_id = aws_kms_key.bucket.arn
       kms_master_key_id = "aws/s3"
@@ -116,7 +116,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit_csp" {
     id = "AuditExpireAfter14Days"
 
     expiration {
-      days = 14
+      days = 7
     }
 
     status = "Enabled"

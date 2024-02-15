@@ -3,36 +3,36 @@ name: "Terraform: Main"
 on:
   push:
     branches:
-    - main
+      - main
 
 jobs:
   generate_jobs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 100
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
 
-    - name: Determine changes
-      uses: ./.github/actions/generate/jobs
+      - name: Determine changes
+        uses: ./.github/actions/generate/jobs
 
-    - id: accounts-terraform-jobs
-      name: Generate Terraform matrix for Accounts
-      uses: ./.github/actions/generate/jobs/terraform
-      with:
-        includes: accounts # we'll manage accounts separately in a job before the others.
+      - id: accounts-terraform-jobs
+        name: Generate Terraform matrix for Accounts
+        uses: ./.github/actions/generate/jobs/terraform
+        with:
+          includes: accounts # we'll manage accounts separately in a job before the others.
 
-    - id: iam-terraform-jobs
-      name: Generate Terraform matrix for IAM
-      uses: ./.github/actions/generate/jobs/terraform
-      with:
-        includes: iam # we'll manage iam separately in a job before the others.
+      - id: iam-terraform-jobs
+        name: Generate Terraform matrix for IAM
+        uses: ./.github/actions/generate/jobs/terraform
+        with:
+          includes: iam # we'll manage iam separately in a job before the others.
 
-    - id: remaining-terraform-jobs
-      name: Generate Terraform matrix for remaining jobs
-      uses: ./.github/actions/generate/jobs/terraform
-      with:
-        excludes: accounts,iam # we'll manage accounts and iam separately in a job before the others.
+      - id: remaining-terraform-jobs
+        name: Generate Terraform matrix for remaining jobs
+        uses: ./.github/actions/generate/jobs/terraform
+        with:
+          excludes: accounts,iam # we'll manage accounts and iam separately in a job before the others.
 
     outputs:
       accounts-terraform-jobs: ${{ steps.accounts-terraform-jobs.outputs.terraform-jobs }}
@@ -43,82 +43,81 @@ jobs:
     if: ${{ needs.generate_jobs.outputs.accounts-terraform-jobs != '[]' }}
     name: "Apply accounts"
     needs:
-    - generate_jobs
+      - generate_jobs
     runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
     strategy:
       fail-fast: false
       matrix:
         terraform-job: ${{ fromJson(needs.generate_jobs.outputs.accounts-terraform-jobs) }}
     concurrency: "${{ matrix.terraform-job }}"
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Authenticate
-      uses: ./.github/actions/auth
-      with:
-        role_name: gha-vjftw-infrastructure-main
+      - name: Authenticate
+        uses: ./.github/actions/auth
+        with:
+          role_name: gha-vjftw-infrastructure-main
 
-    - name: "${{ matrix.terraform-job }}"
-      run: |-
-        ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
+      - name: "${{ matrix.terraform-job }}"
+        run: |-
+          ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
 
   terraform_apply_iam:
     if: ${{ needs.generate_jobs.outputs.iam-terraform-jobs != '[]' }}
     name: "Apply IAM"
     needs:
-    - generate_jobs
-    - terraform_apply_accounts
+      - generate_jobs
+      - terraform_apply_accounts
     runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
     strategy:
       fail-fast: false
       matrix:
         terraform-job: ${{ fromJson(needs.generate_jobs.outputs.iam-terraform-jobs) }}
     concurrency: "${{ matrix.terraform-job }}"
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Authenticate
-      uses: ./.github/actions/auth
-      with:
-        role_name: gha-vjftw-infrastructure-main
+      - name: Authenticate
+        uses: ./.github/actions/auth
+        with:
+          role_name: gha-vjftw-infrastructure-main
 
-    - name: "${{ matrix.terraform-job }}"
-      run: |-
-        ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
-
+      - name: "${{ matrix.terraform-job }}"
+        run: |-
+          ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
 
   terraform_apply_remaining:
     if: ${{ needs.generate_jobs.outputs.remaining-terraform-jobs != '[]' }}
     name: "Apply remaining"
     needs:
-    - generate_jobs
-    - terraform_apply_iam
+      - generate_jobs
+      - terraform_apply_iam
     runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
     strategy:
       fail-fast: false
       matrix:
         terraform-job: ${{ fromJson(needs.generate_jobs.outputs.remaining-terraform-jobs) }}
     concurrency: "${{ matrix.terraform-job }}"
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Authenticate
-      uses: ./.github/actions/auth
-      with:
-        role_name: gha-vjftw-infrastructure-main
+      - name: Authenticate
+        uses: ./.github/actions/auth
+        with:
+          role_name: gha-vjftw-infrastructure-main
 
-    - name: "${{ matrix.terraform-job }}"
-      run: |-
-        ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"
+      - name: "${{ matrix.terraform-job }}"
+        run: |-
+          ./pleasew -p -v2 run //build/ci/github/branch:terraform_apply -- --please_target "${{ matrix.terraform-job }}"

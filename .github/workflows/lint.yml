@@ -9,6 +9,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Lint All
-      run: "./pleasew lint"
+      - uses: actions/checkout@v4
+      - name: Lint All
+        run: "./pleasew lint"

@@ -1,6 +1,6 @@
-subinclude("//build/defs:rego")
+subinclude("///opa//build/defs:opa")
 
-rego_bundle(
+opa_bundle(
     name = "common",
     srcs = [
         "contains.rego",
@@ -11,7 +11,7 @@ rego_bundle(
     visibility = ["PUBLIC"],
 )
 
-rego_test(
+opa_test(
     name = "common_test",
     srcs = [
         "contains_test.rego",

@@ -1,6 +1,6 @@
-subinclude("//build/defs:rego")
+subinclude("///opa//build/defs:opa")
 
-rego_bundle(
+opa_bundle(
     name = "terraform",
     srcs = ["terraform.rego"],
     root = "vjp/terraform",
@@ -8,7 +8,7 @@ rego_bundle(
     deps = ["//policy/common"],
 )
 
-rego_test(
+opa_test(
     name = "terraform_test",
     srcs = [
         "terraform_test.rego",
@@ -31,6 +31,5 @@ opa_eval(
         ":terraform",
         "//policy/common:common",
     ],
-    query = "data.vjp.terraform.deny[_]",
     visibility = ["PUBLIC"],
 )

@@ -23,8 +23,11 @@ terraform init -lock=false
 terraform plan -refresh=false -compact-warnings -lock=false -out=tfplan.out
 terraform show -json tfplan.out > tfplan.json
 
-# if the OPA tool prints 'undefined', it is happy... 
+# if the OPA tool prints 'undefined', it is happy...
 # It will print a table of errors if it is not happy.
 "$OPA_EVAL" \
     --data "$FLAGS_opa_data" \
-    --input tfplan.json
+    --input tfplan.json \
+    --fail-defined \
+    --format raw \
+    "data.vjp.terraform.deny[_]"
