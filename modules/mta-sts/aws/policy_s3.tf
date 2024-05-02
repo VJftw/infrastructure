@@ -9,17 +9,21 @@ resource "aws_s3_bucket" "this" {
   force_destroy = true
 }
 
+resource "aws_s3_bucket_public_access_block" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = true
+  restrict_public_buckets = false
+}
+
 resource "aws_s3_object" "policy_txt" {
   bucket = aws_s3_bucket.this.bucket
   key    = ".well-known/mta-sts.txt"
   source = "${path.module}/mta-sts.txt"
 
   etag = filemd5("${path.module}/mta-sts.txt")
-}
-
-resource "aws_s3_bucket_acl" "this" {
-  bucket = aws_s3_bucket.this.id
-  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_website_configuration" "this" {
