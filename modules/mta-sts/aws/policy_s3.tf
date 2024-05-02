@@ -23,6 +23,8 @@ resource "aws_s3_object" "policy_txt" {
   key    = ".well-known/mta-sts.txt"
   source = "${path.module}/mta-sts.txt"
 
+  content_type = "text/plain"
+
   etag = filemd5("${path.module}/mta-sts.txt")
 }
 
