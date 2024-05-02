@@ -51,3 +51,25 @@ resource "aws_route53_record" "vjp_website" {
     evaluate_target_health = true
   }
 }
+
+data "aws_cloudfront_distribution" "mta-sts" {
+  provider = aws.management
+
+  id = "E28XA2CVAPQ9HH"
+}
+
+resource "aws_route53_record" "mta-sts" {
+  provider = aws.management
+
+  for_each = toset(["A", "AAAA"])
+
+  name    = "mta-sts.${aws_route53_zone.root.name}"
+  type    = each.key
+  zone_id = aws_route53_zone.root.zone_id
+
+  alias {
+    name                   = data.aws_cloudfront_distribution.vjp_website.domain_name
+    zone_id                = data.aws_cloudfront_distribution.vjp_website.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
