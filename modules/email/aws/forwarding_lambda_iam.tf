@@ -46,4 +46,15 @@ data "aws_iam_policy_document" "lambda" {
       "${aws_ses_domain_identity.this.arn}/*"
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:*:*:*"]
+  }
 }
