@@ -18,4 +18,5 @@ module "email" {
 
   domain = data.aws_route53_zone.test.name
   zone_id = data.aws_route53_zone.test.zone_id
+  forwarding_email_recipient = "meetthevj@gmail.com"
 }
